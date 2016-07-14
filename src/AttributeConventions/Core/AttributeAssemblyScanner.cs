@@ -6,6 +6,10 @@
     using System.Reflection;
     using System.Text.RegularExpressions;
 
+    /// <summary>
+    /// Represents a class that is capable of scanning an assembly and register services into an
+    /// <see cref="IServiceContainer"/> instance supporting <see cref="ExportAttribute"/>s.
+    /// </summary>
     public sealed class AttributeAssemblyScanner : IAssemblyScanner
     {
         #region Dependencies
@@ -97,7 +101,7 @@
         /// </summary>
         /// <param name="assembly"> The <see cref="Assembly"/> to scan. </param>
         /// <param name="serviceRegistry"> The target <see cref="IServiceRegistry"/> instance. </param>
-        /// <param name="lifetimeFactory">
+        /// <param name="lifetime">
         /// The <see cref="ILifetime"/> factory that controls the lifetime of the registered service.
         /// </param>
         /// <param name="shouldRegister">
@@ -108,11 +112,18 @@
             var types = TypeExtractor.Execute(assembly);
             foreach (var type in types)
             {
-                BuildImplementationMap(type, serviceRegistry, lifetime, shouldRegister);
+                RegisterInteral(type, serviceRegistry, lifetime, shouldRegister);
             }
         }
 
-        private void BuildImplementationMap(Type implementingType, IServiceRegistry serviceRegistry, Func<ILifetime> lifetimeFactory, Func<Type, Type, bool> shouldRegister)
+        /// <summary>
+        /// Register a new service at the <see cref="ServiceContainer"/>.
+        /// </summary>
+        /// <param name="implementingType"> The type that should be registerd at the container. </param>
+        /// <param name="serviceRegistry"> The <see cref="ServiceContainer"/> that should register the <paramref name="implementingType"/>. </param>
+        /// <param name="lifetimeFactory"> The default lifetime for the service. </param>
+        /// <param name="shouldRegister"> A delegate that specifies if the service should be registered. </param>
+        private void RegisterInteral(Type implementingType, IServiceRegistry serviceRegistry, Func<ILifetime> lifetimeFactory, Func<Type, Type, bool> shouldRegister)
         {
             var info = implementingType.GetTypeInfo();
             var exports = info.GetCustomAttributes<ExportAttribute>();
@@ -135,6 +146,12 @@
             }
         }
 
+        /// <summary>
+        /// Find the service type that is used to register a service at the container.
+        /// </summary>
+        /// <param name="info"> The <see cref="TypeInfo"/> for the service to register. </param>
+        /// <param name="export"> The <see cref="ExportAttribute"/> data for the service to register. </param>
+        /// <returns> The service types that are used to register the service at the container. </returns>
         private Type[] FindServiceTypes(TypeInfo info, ExportAttribute export)
         {
             // 1) use type defined by export
@@ -169,6 +186,11 @@
             return null;
         }
 
+        /// <summary>
+        /// Get the lifetime that is used to register a service at the container.
+        /// </summary>
+        /// <param name="export"> The <see cref="ExportAttribute"/> data for the service to register. </param>
+        /// <returns> The lifetime that is used to register the service at the container. </returns>
         private ILifetime GetLifetime(ExportAttribute export)
         {
             if (export.Lifetime == Lifetime.Transient)
@@ -187,33 +209,12 @@
             return null;
         }
 
-        private void RegisterInternal(Type serviceType, Type implementingType, IServiceRegistry serviceRegistry, ILifetime lifetime)
-        {
-            var serviceTypeInfo = serviceType.GetTypeInfo();
-            if (serviceTypeInfo.IsGenericType && serviceTypeInfo.ContainsGenericParameters)
-            {
-                serviceType = serviceTypeInfo.GetGenericTypeDefinition();
-            }
-
-            /*
-            var factoryArg = implementingType.GetCustomAttribute<ExportAttribute>().Arg;
-            var param1 = Expression.Parameter(typeof(IServiceFactory), "factory");
-            var param2 = Expression.Parameter(factoryArg, "arg");
-            var ctor = implementingType.GetConstructor(new[] { factoryArg });
-            var lambda = Expression.Lambda( //.Lambda<Func<IServiceFactory, int, Foo>>(
-                Expression.New(ctor, param2), param1, param2);
-            var func = lambda.Compile();*/
-
-            var registration = new ServiceRegistration();
-            registration.ServiceName = GetServiceName(serviceType, implementingType);
-            registration.Lifetime = lifetime;
-            registration.ServiceType = serviceType;
-            registration.ImplementingType = implementingType;
-            //registration.FactoryExpression = func;
-
-            serviceRegistry.Register(registration);
-        }
-
+        /// <summary>
+        /// Get the service name that is used to register a service at the container.
+        /// </summary>
+        /// <param name="serviceType"> The service type to be registered. </param>
+        /// <param name="implementingType"> The implementation type to be registered. </param>
+        /// <returns> The service name that is used to register a service at the container. </returns>
         private string GetServiceName(Type serviceType, Type implementingType)
         {
             var implementingTypeName = implementingType.Name;

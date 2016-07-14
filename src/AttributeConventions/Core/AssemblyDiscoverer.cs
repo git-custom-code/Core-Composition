@@ -14,8 +14,7 @@
     /// <remarks>
     /// This class creates a new instance of a <see cref="AssemblyWithAttributeLoader"/> class internally, which does
     /// the actual ReflectionOnly loading of the <see cref="Assembly"/> into the new <see cref="AppDomain"/>.
-    /// (see <see cref="http://www.codeproject.com/Articles/42312/Loading-Assemblies-in-Separate-Directories-Into-a"/>
-    /// for more details)
+    /// (see http://www.codeproject.com/Articles/42312/Loading-Assemblies-in-Separate-Directories-Into-a/ for more details)
     /// </remarks>
     public sealed class AssemblyDiscoverer
     {
