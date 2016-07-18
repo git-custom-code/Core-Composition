@@ -20,6 +20,10 @@
         /// <param name="typeExtractor">
         /// The <see cref="ITypeExtractor"/> that is responsible for extracting concrete types from the assembly being scanned.
         /// </param>
+        /// <param name="factoryDelegateBuilder">
+        /// A <see cref="IFactoryDelegateBuilder"/> that is responsible for compiling a delegate at runtime
+        /// that is used as a factoy for creating types marked with the <see cref="FactoryConstructorAttribute"/>.
+        /// </param>
         /// <param name="compositionRootTypeExtractor">
         /// The <see cref="ITypeExtractor"/> that is responsible for extracting <see cref="ICompositionRoot"/> implementations
         /// from the assembly being scanned.
@@ -30,14 +34,17 @@
         /// </param>
         public AttributeAssemblyScanner(
             ITypeExtractor typeExtractor,
+            IFactoryDelegateBuilder factoryDelegateBuilder,
             ITypeExtractor compositionRootTypeExtractor,
             ICompositionRootExecutor compositionRootExecutor)
         {
             Contract.Requires(typeExtractor != null);
+            Contract.Requires(factoryDelegateBuilder != null);
             Contract.Requires(compositionRootTypeExtractor != null);
             Contract.Requires(compositionRootExecutor != null);
 
             TypeExtractor = typeExtractor;
+            FactoryDelegateBuilder = factoryDelegateBuilder;
             CompositionRootTypeExtractor = compositionRootTypeExtractor;
             CompositionRootExecutor = compositionRootExecutor;
         }
@@ -47,6 +54,12 @@
         /// the assembly being scanned.
         /// </summary>
         private ITypeExtractor TypeExtractor { get; }
+
+        /// <summary>
+        /// Get a <see cref="IFactoryDelegateBuilder"/> that is responsible for compiling a delegate at runtime
+        /// that is used as a factoy for creating types marked with the <see cref="FactoryConstructorAttribute"/>.
+        /// </summary>
+        private IFactoryDelegateBuilder FactoryDelegateBuilder { get; }
 
         /// <summary>
         /// Gets the <see cref="ITypeExtractor"/> that is responsible for extracting <see cref="ICompositionRoot"/>
@@ -139,6 +152,7 @@
                         service.Lifetime = GetLifetime(export) ?? lifetimeFactory();
                         service.ServiceType = serviceType;
                         service.ImplementingType = implementingType;
+                        service.FactoryExpression = FactoryDelegateBuilder.CreateFactoryFor(info);
 
                         serviceRegistry.Register(service);
                     }

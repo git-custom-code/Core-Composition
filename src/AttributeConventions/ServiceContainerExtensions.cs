@@ -18,6 +18,7 @@
         {
             container.AssemblyScanner = new AttributeAssemblyScanner(
                 new CachedTypeExtractor(new AttributeTypeExtractor()),
+                new FactoryDelegateBuilder(),
                 container.CompositionRootTypeExtractor,
                 container.CompositionRootExecutor);
         }
