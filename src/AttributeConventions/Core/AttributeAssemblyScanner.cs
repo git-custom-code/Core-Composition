@@ -125,7 +125,18 @@
             var types = TypeExtractor.Execute(assembly);
             foreach (var type in types)
             {
-                RegisterInteral(type, serviceRegistry, lifetime, shouldRegister);
+                var info = type.GetTypeInfo();
+                var exports = info.GetCustomAttributes<ExportAttribute>();
+                foreach (var export in exports)
+                {
+                    RegisterService(type, serviceRegistry, lifetime, shouldRegister, info, export);
+                }
+
+                var decorators = info.GetCustomAttributes<DecoratorAttribute>();
+                foreach (var decorator in decorators)
+                {
+                    RegisterDecorator(type, serviceRegistry, info, decorator);
+                }
             }
         }
 
@@ -133,31 +144,65 @@
         /// Register a new service at the <see cref="ServiceContainer"/>.
         /// </summary>
         /// <param name="implementingType"> The type that should be registerd at the container. </param>
-        /// <param name="serviceRegistry"> The <see cref="ServiceContainer"/> that should register the <paramref name="implementingType"/>. </param>
-        /// <param name="lifetimeFactory"> The default lifetime for the service. </param>
+        /// <param name="serviceRegistry">
+        /// The <see cref="ServiceContainer"/> that should register the <paramref name="implementingType"/>.
+        /// </param>
+        /// <param name="lifetime"> The default lifetime for the service. </param>
         /// <param name="shouldRegister"> A delegate that specifies if the service should be registered. </param>
-        private void RegisterInteral(Type implementingType, IServiceRegistry serviceRegistry, Func<ILifetime> lifetimeFactory, Func<Type, Type, bool> shouldRegister)
+        /// <param name="info"> The <paramref name="implementingType"/>'s <see cref="TypeInfo"/>. </param>
+        /// <param name="export"> The <see cref="ExportAttribute"/> data for the service to register. </param>
+        private void RegisterService(Type implementingType, IServiceRegistry serviceRegistry,
+            Func<ILifetime> lifetime, Func<Type, Type, bool> shouldRegister, TypeInfo info, ExportAttribute export)
         {
-            var info = implementingType.GetTypeInfo();
-            var exports = info.GetCustomAttributes<ExportAttribute>();
-            foreach (var export in exports)
+            var serviceTypes = FindServiceTypes(info, export) ?? new[] { implementingType };
+            foreach (var serviceType in serviceTypes)
             {
-                var serviceTypes = FindServiceTypes(info, export) ?? new[] { implementingType };
-                foreach (var serviceType in serviceTypes)
+                if (shouldRegister(serviceType, implementingType))
                 {
-                    if (shouldRegister(serviceType, implementingType))
-                    {
-                        var service = new ServiceRegistration();
-                        service.ServiceName = export.ServiceName ?? GetServiceName(serviceType, implementingType);
-                        service.Lifetime = GetLifetime(export) ?? lifetimeFactory();
-                        service.ServiceType = serviceType;
-                        service.ImplementingType = implementingType;
-                        service.FactoryExpression = FactoryDelegateBuilder.CreateFactoryFor(info);
+                    var service = new ServiceRegistration();
+                    service.ServiceName = export.ServiceName ?? GetServiceName(serviceType, implementingType);
+                    service.Lifetime = GetLifetime(export) ?? lifetime();
+                    service.ServiceType = serviceType;
+                    service.ImplementingType = implementingType;
+                    service.FactoryExpression = FactoryDelegateBuilder.CreateFactoryFor(info);
 
-                        serviceRegistry.Register(service);
-                    }
+                    serviceRegistry.Register(service);
                 }
             }
+        }
+
+        /// <summary>
+        /// Register a new decorator at the <see cref="ServiceContainer"/>.
+        /// </summary>
+        /// <param name="implementingType"> The type that should be registerd as decorator. </param>
+        /// <param name="serviceRegistry">
+        /// The <see cref="ServiceContainer"/> that should register the <paramref name="implementingType"/>.
+        /// </param>
+        /// <param name="info"> The <paramref name="implementingType"/>'s <see cref="TypeInfo"/>. </param>
+        /// <param name="decorator"> The <see cref="DecoratorAttribute"/> data for the service to register. </param>
+        private void RegisterDecorator(Type implementingType, IServiceRegistry serviceRegistry,
+            TypeInfo info, DecoratorAttribute decorator)
+        {
+            var serviceType = decorator.DecoratedServiceType;
+            if (serviceType == null)
+            {
+                var ctor = info.GetConstructors().FirstOrDefault(c =>
+                    c.GetParameters().Count() == 1 &&
+                    c.GetParameters()[0].ParameterType.IsAssignableFrom(implementingType));
+                if (ctor == null)
+                {
+                    throw new NotImplementedException("No decorator constructor implemented");
+                }
+
+                serviceType = ctor.GetParameters()[0].ParameterType;
+            }
+
+            serviceRegistry.Decorate(new DecoratorRegistration
+                {
+                    CanDecorate = s => true,
+                    ImplementingType = implementingType,
+                    ServiceType = serviceType
+                });
         }
 
         /// <summary>

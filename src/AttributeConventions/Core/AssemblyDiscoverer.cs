@@ -8,7 +8,7 @@
     using System.Security.Policy;
 
     /// <summary>
-    /// Discover a collection of <see cref="Assembly"/>s that are visible for inversion of control, i.e. assemblies that
+    /// Discovers a collection of <see cref="Assembly"/>s, that are visible for inversion of control, i.e. assemblies that
     /// are marked with either the <see cref="IocVisibleAssemblyAttribute"/> or the <see cref="CompositionRootTypeAttribute"/>.
     /// </summary>
     /// <remarks>
