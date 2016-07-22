@@ -135,7 +135,7 @@
                 var decorators = info.GetCustomAttributes<DecoratorAttribute>();
                 foreach (var decorator in decorators)
                 {
-                    RegisterDecorator(type, serviceRegistry, info, decorator);
+                    RegisterDecorator(type, serviceRegistry, info, decorator.DecoratedServiceType);
                 }
             }
         }
@@ -167,6 +167,15 @@
                     service.FactoryExpression = FactoryDelegateBuilder.CreateFactoryFor(info);
 
                     serviceRegistry.Register(service);
+
+                    var decorators = info.GetCustomAttributes<DecoratedByAttribute>();
+                    foreach (var decorator in decorators)
+                    {
+                        var decoratorType = decorator.DecoratorType;
+                        var decoratorInfo = decoratorType.GetTypeInfo();
+                        Func<ServiceRegistration, bool> canDecorate = s => s.ImplementingType == implementingType;
+                        RegisterDecorator(decoratorType, serviceRegistry, decoratorInfo, serviceType, canDecorate);
+                    }
                 }
             }
         }
@@ -179,11 +188,13 @@
         /// The <see cref="ServiceContainer"/> that should register the <paramref name="implementingType"/>.
         /// </param>
         /// <param name="info"> The <paramref name="implementingType"/>'s <see cref="TypeInfo"/>. </param>
-        /// <param name="decorator"> The <see cref="DecoratorAttribute"/> data for the service to register. </param>
+        /// <param name="serviceType"> The (service) type that should be decorated. </param>
+        /// <param name="canDecorate">
+        /// A delegate that specifies if the <paramref name="serviceType"/> should be decorated.
+        /// </param>
         private void RegisterDecorator(Type implementingType, IServiceRegistry serviceRegistry,
-            TypeInfo info, DecoratorAttribute decorator)
+            TypeInfo info, Type serviceType, Func<ServiceRegistration, bool> canDecorate = null)
         {
-            var serviceType = decorator.DecoratedServiceType;
             if (serviceType == null)
             {
                 var ctor = info.GetConstructors().FirstOrDefault(c =>
@@ -199,7 +210,7 @@
 
             serviceRegistry.Decorate(new DecoratorRegistration
                 {
-                    CanDecorate = s => true,
+                    CanDecorate = canDecorate ?? (s => true),
                     ImplementingType = implementingType,
                     ServiceType = serviceType
                 });

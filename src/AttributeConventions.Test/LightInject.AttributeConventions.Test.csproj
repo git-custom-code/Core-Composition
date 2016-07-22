@@ -64,6 +64,7 @@
     <Compile Include="..\AttributeConventions\Properties\GlobalAssemblyVersion.cs">
       <Link>Properties\GlobalAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="Decorator\RegisterDecoratorPerImplementation.cs" />
     <Compile Include="Decorator\RegisterDecoratorUsingConventions.cs" />
     <Compile Include="Decorator\RegisterDecorator.cs" />
     <Compile Include="Factory\RegisterTypePartialFactory.cs" />

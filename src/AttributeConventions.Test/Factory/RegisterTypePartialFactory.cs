@@ -41,7 +41,7 @@
             public IBar Bar { get; }
         }
 
-        [Fact(DisplayName = "Register type factory")]
+        [Fact(DisplayName = "Register type with partial factory")]
         [Trait("Category", "IntegrationTest")]
         public void RegisterTypePartialFactorySucccess()
         {
@@ -63,12 +63,12 @@
             Assert.Equal(42, foo.Id);
         }
 
-        [Fact(DisplayName = "Inject type factory")]
+        [Fact(DisplayName = "Inject type with partial factory")]
         [Trait("Category", "IntegrationTest")]
         public void InjectTypeFactorySucccess()
         {
             // Given
-            var rootDir = typeof(RegisterTypeWithServiceName).Assembly.Location;
+            var rootDir = typeof(RegisterTypePartialFactory).Assembly.Location;
             var iocContainer = new ServiceContainer();
             iocContainer.UseAttributeConventions();
             iocContainer.RegisterIocVisibleAssemblies(rootDir);

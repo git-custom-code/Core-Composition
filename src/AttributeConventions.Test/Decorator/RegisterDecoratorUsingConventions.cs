@@ -34,7 +34,7 @@
         public void RegisterDecoratorUsingConventionsSucccess()
         {
             // Given
-            var rootDir = typeof(RegisterTypeFactory).Assembly.Location;
+            var rootDir = typeof(RegisterDecoratorUsingConventions).Assembly.Location;
             var iocContainer = new ServiceContainer();
             iocContainer.UseAttributeConventions();
             iocContainer.RegisterIocVisibleAssemblies(rootDir);

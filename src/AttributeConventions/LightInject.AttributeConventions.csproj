@@ -40,6 +40,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\DecoratedByAttribute.cs" />
     <Compile Include="Attributes\DecoratorAttribute.cs" />
     <Compile Include="Attributes\FactoryConstructorAttribute.cs" />
     <Compile Include="Core\AssemblyDiscoverer.cs" />
