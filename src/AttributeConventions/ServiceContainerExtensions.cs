@@ -21,6 +21,8 @@
                 new FactoryDelegateBuilder(),
                 container.CompositionRootTypeExtractor,
                 container.CompositionRootExecutor);
+            container.ConstructorDependencySelector = new AttributeConstructorDependencySelector();
+            container.ConstructorSelector = new AttributeConstructorSelector(container.CanGetInstance);
         }
 
         /// <summary>
