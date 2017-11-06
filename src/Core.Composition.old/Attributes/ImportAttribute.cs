@@ -1,6 +1,7 @@
 ﻿namespace CustomCode.Core.Composition
 {
     using System;
+    using System.Diagnostics.Contracts;
 
     /// <summary>
     /// Use this attribute for constructor parameters to import a named type from the <see cref="ServiceContainer"/>.
@@ -42,10 +43,7 @@
         /// <param name="serviceName"> The name of the service to be imported. </param>
         public ImportAttribute(string serviceName)
         {
-            if (string.IsNullOrEmpty(serviceName))
-            {
-                throw new ArgumentNullException(nameof(serviceName));
-            }
+            Contract.Requires(!string.IsNullOrEmpty(serviceName));
 
             ServiceName = serviceName;
         }

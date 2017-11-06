@@ -37,11 +37,11 @@
         /// </param>
         public static void RegisterIocVisibleAssemblies(this ServiceContainer container, string codeBase = null)
         {
-            //var assemblyDiscoverer = new AssemblyDiscoverer();
-            //foreach(var assemblyPath in assemblyDiscoverer.DiscoverIocVisibleAssemblies(codeBase))
-            //{
-            //    container.RegisterAssembly(Assembly.LoadFrom(assemblyPath));
-            //}
+            var assemblyDiscoverer = new AssemblyDiscoverer();
+            foreach(var assemblyPath in assemblyDiscoverer.DiscoverIocVisibleAssemblies(codeBase))
+            {
+                container.RegisterAssembly(Assembly.LoadFrom(assemblyPath));
+            }
         }
 
         #endregion

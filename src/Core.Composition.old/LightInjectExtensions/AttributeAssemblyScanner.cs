@@ -2,6 +2,7 @@
 {
     using LightInject;
     using System;
+    using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Reflection;
     using System.Text.RegularExpressions;
@@ -38,10 +39,15 @@
             ITypeExtractor compositionRootTypeExtractor,
             ICompositionRootExecutor compositionRootExecutor)
         {
-            TypeExtractor = typeExtractor ?? throw new ArgumentNullException(nameof(typeExtractor));
-            FactoryDelegateBuilder = factoryDelegateBuilder ?? throw new ArgumentNullException(nameof(factoryDelegateBuilder));
-            CompositionRootTypeExtractor = compositionRootTypeExtractor ?? throw new ArgumentNullException(nameof(compositionRootTypeExtractor));
-            CompositionRootExecutor = compositionRootExecutor ?? throw new ArgumentNullException(nameof(compositionRootExecutor));
+            Contract.Requires(typeExtractor != null);
+            Contract.Requires(factoryDelegateBuilder != null);
+            Contract.Requires(compositionRootTypeExtractor != null);
+            Contract.Requires(compositionRootExecutor != null);
+
+            TypeExtractor = typeExtractor;
+            FactoryDelegateBuilder = factoryDelegateBuilder;
+            CompositionRootTypeExtractor = compositionRootTypeExtractor;
+            CompositionRootExecutor = compositionRootExecutor;
         }
 
         /// <summary>
@@ -194,7 +200,7 @@
             {
                 var ctor = info.GetConstructors().FirstOrDefault(c =>
                     c.GetParameters().Count() == 1 &&
-                    c.GetParameters()[0].ParameterType.GetTypeInfo().IsAssignableFrom(implementingType));
+                    c.GetParameters()[0].ParameterType.IsAssignableFrom(implementingType));
                 if (ctor == null)
                 {
                     throw new NotImplementedException("No decorator constructor implemented");

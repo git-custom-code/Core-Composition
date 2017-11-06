@@ -37,10 +37,9 @@
         {
             return assembly
                 .DefinedTypes
-                .Where(t => t.CustomAttributes.Any(a =>
+                .Where(t => t.GetTypeInfo().CustomAttributes.Any(a =>
                     a.AttributeType == ExportType ||
                     a.AttributeType == DecoratorType))
-                .Select(t => t.AsType())
                 .ToArray();
         }
 
