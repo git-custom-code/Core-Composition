@@ -3,6 +3,7 @@
     using LightInjectExtensions;
     using LightInject;
     using System.Reflection;
+    using System.Runtime.Loader;
 
     /// <summary>
     /// Extension methods for using attribute conventions with the <see cref="ServiceContainer"/> type.
@@ -37,6 +38,9 @@
         /// </param>
         public static void RegisterIocVisibleAssemblies(this ServiceContainer container, string codeBase = null)
         {
+            var asm = AssemblyLoadContext.Default.LoadFromAssemblyPath(@"C:\Development\Core.Composition\src\Test.Core.Composition\bin\Debug\netcoreapp2.0\Test.Core.Composition.dll");
+            container.RegisterAssembly(asm);
+
             //var assemblyDiscoverer = new AssemblyDiscoverer();
             //foreach(var assemblyPath in assemblyDiscoverer.DiscoverIocVisibleAssemblies(codeBase))
             //{

@@ -22,11 +22,11 @@
         {
             ServiceFactoryType = typeof(IServiceFactory);
 
-            var methods = ServiceFactoryType.GetTypeInfo().GetMethods();
+            var methods = typeof(ServiceFactoryExtensions).GetTypeInfo().GetMethods();
             GetInstanceMethod = methods.FirstOrDefault(mi =>
                 mi.Name == nameof(IServiceFactory.GetInstance) &&
                 mi.GetGenericArguments().Count() == 1 &&
-                mi.GetParameters().Count() == 0);
+                mi.GetParameters().Count() == 1);
         }
 
         #endregion
@@ -122,7 +122,7 @@
                 else
                 {
                     var info = GetInstanceMethod.MakeGenericMethod(paramInfos[i].ParameterType);
-                    ctorArgs.Add(Expression.Call(factory, info));
+                    ctorArgs.Add(Expression.Call(info, factory));
                 }
             }
             var lambda = Expression.Lambda(Expression.New(ctor, ctorArgs), factoryArgs);

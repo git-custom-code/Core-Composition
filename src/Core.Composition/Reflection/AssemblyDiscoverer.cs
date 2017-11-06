@@ -1,4 +1,4 @@
-﻿namespace CustomCode.Core.Composition.LightInjectExtensions
+﻿namespace CustomCode.Core.Composition.Reflection
 {
     using LightInject;
     using System;
