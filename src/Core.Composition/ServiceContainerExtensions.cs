@@ -1,8 +1,8 @@
 ﻿namespace CustomCode.Core.Composition
 {
-    using LightInjectExtensions;
     using LightInject;
-    using System.Reflection;
+    using LightInjectExtensions;
+    using Reflection;
     using System.Runtime.Loader;
 
     /// <summary>
@@ -38,14 +38,11 @@
         /// </param>
         public static void RegisterIocVisibleAssemblies(this ServiceContainer container, string codeBase = null)
         {
-            var asm = AssemblyLoadContext.Default.LoadFromAssemblyPath(@"C:\Development\Core.Composition\src\Test.Core.Composition\bin\Debug\netcoreapp2.0\Test.Core.Composition.dll");
-            container.RegisterAssembly(asm);
-
-            //var assemblyDiscoverer = new AssemblyDiscoverer();
-            //foreach(var assemblyPath in assemblyDiscoverer.DiscoverIocVisibleAssemblies(codeBase))
-            //{
-            //    container.RegisterAssembly(Assembly.LoadFrom(assemblyPath));
-            //}
+            var assemblyDiscoverer = new AssemblyDiscoverer();
+            foreach(var assemblyPath in assemblyDiscoverer.DiscoverIocVisibleAssemblies(codeBase))
+            {
+                container.RegisterAssembly(AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath));
+            }
         }
 
         #endregion
