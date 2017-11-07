@@ -13,7 +13,7 @@
     {
         [Fact(DisplayName = "Test that this assembly is parsed as valid pe file")]
         [Trait("Category", "IntegrationTest")]
-        public void Test()
+        public void ValidPortableExecutableTest()
         {
             // Given
             var codeBase = Assembly.GetExecutingAssembly().CodeBase;
@@ -23,6 +23,23 @@
 
             // When
             var isValid = file.IsValidPortableExecutable();
+
+            // Then
+            Assert.True(isValid);
+        }
+
+        [Fact(DisplayName = "Test that this assembly is parsed as valid .net assembly")]
+        [Trait("Category", "IntegrationTest")]
+        public void ValidNetAssemblyTest()
+        {
+            // Given
+            var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+            var uri = new UriBuilder(codeBase);
+            var path = Uri.UnescapeDataString(uri.Path);
+            var file = new SlimPortableExecutable(path);
+
+            // When
+            var isValid = file.IsValidNetAssembly();
 
             // Then
             Assert.True(isValid);
