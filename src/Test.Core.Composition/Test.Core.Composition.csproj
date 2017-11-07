@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <AssemblyName>CustomCode.Test.Core.Composition</AssemblyName>
+
+    <RootNamespace>CustomCode.Core.Composition.Test</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

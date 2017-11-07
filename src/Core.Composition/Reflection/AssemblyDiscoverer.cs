@@ -59,34 +59,20 @@
         public IEnumerable<string> GetIocVisibleAssemblyPaths(string applicationRootDir)
         {
             var assemblyPaths = new List<string>();
-
             var directory = new DirectoryInfo(applicationRootDir);
+            
+            var libraries = Directory.GetFiles(applicationRootDir, "*.dll", SearchOption.AllDirectories)
+                .Select(f => new SlimPortableExecutable(Path.GetFullPath(f)))
+                .Where(f => f.IsValidPortableExecutable())
+                .ToList();
+            var exes = Directory.GetFiles(applicationRootDir, "*.exe", SearchOption.AllDirectories)
+                .Select(f => new SlimPortableExecutable(Path.GetFullPath(f)))
+                .Where(f => f.IsValidPortableExecutable())
+                .ToList();
 
-            try
+            foreach (var assembly in libraries.Union(exes))
             {
-                var libraries = Directory.GetFiles(applicationRootDir, "*.dll", SearchOption.AllDirectories)
-                    //.Select(LoadAssemblyForReflection)
-                    //.Where(assembly => assembly != null)
-                    .Select(f => Path.GetFullPath(f))
-                    .ToList();
-                var exes = Directory.GetFiles(applicationRootDir, "*.exe", SearchOption.AllDirectories)
-                    //.Select(LoadAssemblyForReflection)
-                    //.Where(assembly => assembly != null)
-                    .Select(f => Path.GetFullPath(f))
-                    .ToList();
-
-                foreach (var assembly in libraries.Union(exes))
-                {
-                    assemblyPaths.Add(assembly);
-                    //if (assembly.GetCustomAttributesData().Any(IsVisibleForIoc))
-                    //{
-                    //    assemblyPaths.Add(assembly.Location);
-                    //}
-                }
-            }
-            finally
-            {
-                //AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve -= resolveEventHandler;
+                assemblyPaths.Add(assembly.Path);
             }
 
             return assemblyPaths;
