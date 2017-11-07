@@ -1,6 +1,5 @@
 ﻿namespace CustomCode.Core.Composition.Reflection
 {
-    using LightInject;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -63,11 +62,11 @@
             
             var libraries = Directory.GetFiles(applicationRootDir, "*.dll", SearchOption.AllDirectories)
                 .Select(f => new SlimPortableExecutable(Path.GetFullPath(f)))
-                .Where(f => f.IsValidPortableExecutable())
+                .Where(f => f.IsValidNetAssembly())
                 .ToList();
             var exes = Directory.GetFiles(applicationRootDir, "*.exe", SearchOption.AllDirectories)
                 .Select(f => new SlimPortableExecutable(Path.GetFullPath(f)))
-                .Where(f => f.IsValidPortableExecutable())
+                .Where(f => f.IsValidNetAssembly())
                 .ToList();
 
             foreach (var assembly in libraries.Union(exes))

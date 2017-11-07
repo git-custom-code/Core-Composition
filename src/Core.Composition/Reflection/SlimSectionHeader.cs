@@ -1,5 +1,9 @@
 ﻿namespace CustomCode.Core.Composition.Reflection
 {
+    /// <summary>
+    /// A minimal (and by no means complete) implemenation of a section header.
+    /// (see https://msdn.microsoft.com/en-us/library/windows/desktop/ms680547(v=vs.85).aspx#section_flags for more details)
+    /// </summary>
     public sealed class SlimSectionHeader
     {
         #region Dependencies
