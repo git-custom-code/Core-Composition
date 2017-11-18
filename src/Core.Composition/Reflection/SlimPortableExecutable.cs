@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
     /// <summary>
     /// A minimal (and by no means complete) implemenation of a parser for the portable executable
@@ -323,6 +324,257 @@
                     reader.ReadUInt32(),
                     reader.ReadNullTerminatedFourByteAlignedString()));
             }
+        }
+
+        /// <summary>
+        /// Check if the underlying file is a valid .net assembly that contains a user defined
+        /// <see cref="IocVisibleAssemblyAttribute"/>.
+        /// </summary>
+        /// <returns>
+        /// True if the file is a valid .net assembly with an <see cref="IocVisibleAssemblyAttribute"/> defined, false otherwise.
+        /// </returns>
+        public bool IsIocVisibleAssembly()
+        {
+            if (File.Exists(Path))
+            {
+                using (var stream = File.OpenRead(Path))
+                using (var reader = new BinaryReader(stream))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+
+                    if (IsValidPortableExecutable(reader))
+                    {
+                        if (IsValidNetAssembly(reader))
+                        {
+                            return IsIocVisibleAssembly(reader);
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check if the underlying file is a valid .net assembly that contains a user defined
+        /// <see cref="IocVisibleAssemblyAttribute"/>.
+        /// </summary>
+        /// <param name="reader"> The reader to the underlying file. </param>
+        /// <returns>
+        /// True if the file is a valid .net assembly with an <see cref="IocVisibleAssemblyAttribute"/> defined, false otherwise.
+        /// </returns>
+
+        private bool IsIocVisibleAssembly(BinaryReader reader)
+        {
+            var strings = ReadStringStream(reader);
+            if (strings.hasIocAttributeName == false)
+            {
+                return false;
+            }
+
+            var header = ReadMetadataTableHeader(reader);
+            if (header.tables == null || header.offsetSizes == null)
+            {
+                return false;
+            }
+
+            var tables = ReadMetadataTableSizes(reader, header.tables.Value);
+            return ContainsIocVisibleAttributeTypeReference(reader, strings.stream, tables, header.offsetSizes.Value);
+        }
+
+        /// <summary>
+        /// Parse the portable executable's string stream to a dictionary and check if it contains entries for the
+        /// <see cref="IocVisibleAssemblyAttribute"/> type and namespace.
+        /// </summary>
+        /// <param name="reader"> The reader to the underlying file. </param>
+        /// <returns>
+        /// The parsed string stream as dictionary and a flag indicating whether or not the string stream contains
+        /// entries for the <see cref="IocVisibleAssemblyAttribute"/> type and namespace.
+        /// </returns>
+        private (Dictionary<uint, string> stream, bool hasIocAttributeName) ReadStringStream(BinaryReader reader)
+        {
+            var stringStream = StreamHeaders.SingleOrDefault(h => "#strings".Equals(h.Name, StringComparison.OrdinalIgnoreCase));
+            if (stringStream == null)
+            {
+                return (null, false);
+            }
+
+            uint stringStreamOffset;
+            if (!TryResolveAddress(stringStream.RelativeVirtualAddress, out stringStreamOffset))
+            {
+                return (null, false);
+            }
+
+            reader.BaseStream.Position = stringStreamOffset;
+
+            var hasAttributeName = false;
+            var hasAttributeNamespace = false;
+            var @namespace = typeof(IocVisibleAssemblyAttribute).Namespace;
+            var strings = new Dictionary<uint, string>();
+
+            while (reader.BaseStream.Position < stringStreamOffset + stringStream.Size)
+            {
+                var index = (uint)(reader.BaseStream.Position - stringStreamOffset);
+                var value = reader.ReadNullTermString();
+                strings.Add(index, value);
+
+                if (!hasAttributeName)
+                {
+                    hasAttributeName = nameof(IocVisibleAssemblyAttribute).Equals(value);
+                }
+
+                if (!hasAttributeNamespace)
+                {
+                    hasAttributeNamespace = @namespace.Equals(value);
+                }
+            }
+
+            return (strings, hasAttributeName & hasAttributeNamespace);
+        }
+
+        /// <summary>
+        /// Parse the metadata table header of the metadata stream.
+        /// </summary>
+        /// <param name="reader"> The reader to the underlying file. </param>
+        /// <returns>
+        /// An enumeration that codes the present metadata tables as well as a second enumeration that defines index sizes
+        /// to the string, blob and guid streams or null if the header could not be parsed successfully.
+        /// </returns>
+        private (MetadataTable? tables, StreamOffsetSizes? offsetSizes) ReadMetadataTableHeader(BinaryReader reader)
+        {
+            var metadataTableStream = StreamHeaders.SingleOrDefault(h =>
+                "#~".Equals(h.Name, StringComparison.OrdinalIgnoreCase) ||
+                "#-".Equals(h.Name, StringComparison.OrdinalIgnoreCase));
+            if (metadataTableStream == null)
+            {
+                return (null, null);
+            }
+
+            uint metadataTableStreamOffset;
+            if (!TryResolveAddress(metadataTableStream.RelativeVirtualAddress, out metadataTableStreamOffset))
+            {
+                return (null, null);
+            }
+
+            reader.BaseStream.Position = metadataTableStreamOffset;
+
+            var reserved1 = reader.ReadUInt32();
+            var majorVersion = reader.ReadByte();
+            var minorVersion = reader.ReadByte();
+            var offsetSizes = (StreamOffsetSizes)reader.ReadByte();
+            var reserved2 = reader.ReadByte();
+            var metadataTables = (MetadataTable)reader.ReadUInt64();
+            reader.BaseStream.Position += 8;
+
+            if (reserved1 != 0 || reserved2 != 1 || majorVersion != 2 || minorVersion != 0)
+            {
+                return (null, null);
+            }
+
+            return (metadataTables, offsetSizes);
+        }
+
+        /// <summary>
+        /// Read the type and number of rows of each present metadata table.
+        /// </summary>
+        /// <param name="reader"> The reader to the underlying file. </param>
+        /// <param name="presentTables"> An enumeration that contains a flag for each present metadata table. </param>
+        /// <returns> A collection that contains an entry with type and number of rows for each present metadata table. </returns>
+        private List<(MetadataTable type, uint numberOfRows)> ReadMetadataTableSizes(BinaryReader reader, MetadataTable presentTables)
+        {
+            var tableTypes = new List<MetadataTable>();
+            var tableFlags = (ulong)presentTables;
+            for (var i = 0; i < 64; ++i)
+            {
+                var mask = (ulong)Math.Pow(2, i);
+                var hasTable = ((tableFlags & mask) == mask);
+                if (hasTable)
+                {
+                    tableTypes.Add((MetadataTable)mask);
+                }
+            }
+
+            var result = new List<(MetadataTable type, uint numberOfRows)>(tableTypes.Count);
+            foreach (var type in tableTypes)
+            {
+                var numberOfRows = reader.ReadUInt32();
+                result.Add((type, numberOfRows));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Check if the TypeRef metadata table contains a reference to the <see cref="IocVisibleAssemblyAttribute"/> type.
+        /// </summary>
+        /// <param name="reader"> The reader to the underlying file. </param>
+        /// <param name="stringStream"> The string stream that contains the names of the type references. </param>
+        /// <param name="tables"> The metadata table information that contains the number of rows for each table. </param>
+        /// <param name="streamOffsetSizes"> The index sizes for string, blob and guid streams. </param>
+        /// <returns>
+        /// True if a reference to the <see cref="IocVisibleAssemblyAttribute"/> type was found, false otherwise.
+        /// </returns>
+        private bool ContainsIocVisibleAttributeTypeReference(
+            BinaryReader reader,
+            Dictionary<uint, string> stringStream,
+            List<(MetadataTable type, uint numberOfRows)> tables,
+            StreamOffsetSizes streamOffsetSizes)
+        {
+            var stringIndexSize = streamOffsetSizes.HasFlag(StreamOffsetSizes.String) ? 4 : 2;
+            var guidIndexSize = streamOffsetSizes.HasFlag(StreamOffsetSizes.Guid) ? 4 : 2;
+
+            var moduleRows = tables.FirstOrDefault(t => t.type == MetadataTable.Module).numberOfRows;
+            var moduleRefRows = tables.FirstOrDefault(t => t.type == MetadataTable.ModuleRef).numberOfRows;
+            var assemblyRefRows = tables.FirstOrDefault(t => t.type == MetadataTable.AssemblyRef).numberOfRows;
+            var typeRefRows = tables.FirstOrDefault(t => t.type == MetadataTable.TypeRef).numberOfRows;
+            var maxRows = Math.Max(moduleRows, Math.Max(moduleRefRows, Math.Max(assemblyRefRows, typeRefRows)));
+            var resolutionScopeIndexSize = maxRows > (1 << 14) ? 4 : 2;
+
+            foreach (var table in tables)
+            {
+                if (table.type == MetadataTable.Module)
+                {
+                    var rowSize = 2 + stringIndexSize + 3 * guidIndexSize;
+                    reader.BaseStream.Position += table.numberOfRows * rowSize;
+                }
+                else if (table.type == MetadataTable.TypeRef)
+                {
+                    var @namespace = typeof(IocVisibleAssemblyAttribute).Namespace;
+                    for (var i = 0; i < table.numberOfRows; ++i)
+                    {
+                        uint resolutionScope;
+                        if (resolutionScopeIndexSize == 4)
+                        {
+                            resolutionScope = reader.ReadUInt32();
+                        }
+                        else
+                        {
+                            resolutionScope = reader.ReadUInt16();
+                        }
+
+                        var nameIndex = reader.ReadUInt16();
+                        var namespaceIndex = reader.ReadUInt16();
+                        var isAssemblyRef = (resolutionScope & 0x3) == 2;
+                        if (isAssemblyRef)
+                        {
+                            if (stringStream.TryGetValue(nameIndex, out string typeName))
+                            {
+                                if (stringStream.TryGetValue(namespaceIndex, out string typeNamespace))
+                                {
+                                    if (typeName == nameof(IocVisibleAssemblyAttribute) && typeNamespace == @namespace)
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return false;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>

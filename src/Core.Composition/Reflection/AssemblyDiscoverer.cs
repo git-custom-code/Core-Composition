@@ -62,11 +62,11 @@
             
             var libraries = Directory.GetFiles(applicationRootDir, "*.dll", SearchOption.AllDirectories)
                 .Select(f => new SlimPortableExecutable(Path.GetFullPath(f)))
-                .Where(f => f.IsValidNetAssembly())
+                .Where(f => f.IsIocVisibleAssembly())
                 .ToList();
             var exes = Directory.GetFiles(applicationRootDir, "*.exe", SearchOption.AllDirectories)
                 .Select(f => new SlimPortableExecutable(Path.GetFullPath(f)))
-                .Where(f => f.IsValidNetAssembly())
+                .Where(f => f.IsIocVisibleAssembly())
                 .ToList();
 
             foreach (var assembly in libraries.Union(exes))
