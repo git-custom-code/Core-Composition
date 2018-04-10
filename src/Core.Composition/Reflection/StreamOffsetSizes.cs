@@ -1,4 +1,4 @@
-﻿namespace CustomCode.Core.Composition.Reflection
+namespace CustomCode.Core.Composition.Reflection
 {
     using System;
 
@@ -12,8 +12,11 @@
     [Flags]
     public enum StreamOffsetSizes : byte
     {
+        /// <summary> The index size for the string stream. </summary>
         String = 0x01,
+        /// <summary> The index size for the guid stream. </summary>
         Guid = 0x02,
+        /// <summary> The index size for the blob stream. </summary>
         Blob = 0x04,
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace CustomCode.Core.Composition.Reflection
+namespace CustomCode.Core.Composition.Reflection
 {
     using System;
     using System.Collections.Generic;
@@ -162,14 +162,14 @@
                 return false;
             }
 
-            var clr = ReadDataDirectories(reader, dataDirectoryCount);
-            if (clr.size != 72)
+            var (virtualAddress, size) = ReadDataDirectories(reader, dataDirectoryCount);
+            if (size != 72)
             {
                 return false;
             }
 
             ReadSectionHeaders(reader, numberOfSections);
-            var metadata = ReadClrHeader(reader, clr.virtualAddress);
+            var metadata = ReadClrHeader(reader, virtualAddress);
             if (metadata.headerSize != 72 || metadata.address == 0 || metadata.size == 0)
             {
                 return false;
@@ -264,8 +264,7 @@
         /// <returns> The size and relative virtual address of the metadata header and directory. </returns>
         private (uint headerSize, uint address, uint size) ReadClrHeader(BinaryReader reader, uint clrVirtualAddress)
         {
-            uint clrHeaderOffset;
-            if (!TryResolveAddress(clrVirtualAddress, out clrHeaderOffset))
+            if (!TryResolveAddress(clrVirtualAddress, out var clrHeaderOffset))
             {
                 return (0, 0, 0);
             }
@@ -288,8 +287,7 @@
         /// <returns> The number of metadata streams stored in the portable executable. </returns>
         private uint ReadMetadataHeader(BinaryReader reader, uint metaDataDirectoryAddress)
         {
-            uint metadataOffset;
-            if (!TryResolveAddress(metaDataDirectoryAddress, out metadataOffset))
+            if (!TryResolveAddress(metaDataDirectoryAddress, out var metadataOffset))
             {
                 return 0;
             }
@@ -366,8 +364,8 @@
 
         private bool IsIocVisibleAssembly(BinaryReader reader)
         {
-            var strings = ReadStringStream(reader);
-            if (strings.hasIocAttributeName == false)
+            var (stream, hasIocAttributeName) = ReadStringStream(reader);
+            if (hasIocAttributeName == false)
             {
                 return false;
             }
@@ -379,7 +377,7 @@
             }
 
             var tables = ReadMetadataTableSizes(reader, header.tables.Value);
-            return ContainsIocVisibleAttributeTypeReference(reader, strings.stream, tables, header.offsetSizes.Value);
+            return ContainsIocVisibleAttributeTypeReference(reader, stream, tables, header.offsetSizes.Value);
         }
 
         /// <summary>
@@ -399,8 +397,7 @@
                 return (null, false);
             }
 
-            uint stringStreamOffset;
-            if (!TryResolveAddress(stringStream.RelativeVirtualAddress, out stringStreamOffset))
+            if (!TryResolveAddress(stringStream.RelativeVirtualAddress, out var stringStreamOffset))
             {
                 return (null, false);
             }
@@ -450,8 +447,7 @@
                 return (null, null);
             }
 
-            uint metadataTableStreamOffset;
-            if (!TryResolveAddress(metadataTableStream.RelativeVirtualAddress, out metadataTableStreamOffset))
+            if (!TryResolveAddress(metadataTableStream.RelativeVirtualAddress, out var metadataTableStreamOffset))
             {
                 return (null, null);
             }
@@ -530,17 +526,17 @@
             var maxRows = Math.Max(moduleRows, Math.Max(moduleRefRows, Math.Max(assemblyRefRows, typeRefRows)));
             var resolutionScopeIndexSize = maxRows > (1 << 14) ? 4 : 2;
 
-            foreach (var table in tables)
+            foreach (var (type, numberOfRows) in tables)
             {
-                if (table.type == MetadataTable.Module)
+                if (type == MetadataTable.Module)
                 {
                     var rowSize = 2 + stringIndexSize + 3 * guidIndexSize;
-                    reader.BaseStream.Position += table.numberOfRows * rowSize;
+                    reader.BaseStream.Position += numberOfRows * rowSize;
                 }
-                else if (table.type == MetadataTable.TypeRef)
+                else if (type == MetadataTable.TypeRef)
                 {
                     var @namespace = typeof(IocVisibleAssemblyAttribute).Namespace;
-                    for (var i = 0; i < table.numberOfRows; ++i)
+                    for (var i = 0; i < numberOfRows; ++i)
                     {
                         uint resolutionScope;
                         if (resolutionScopeIndexSize == 4)
@@ -557,9 +553,9 @@
                         var isAssemblyRef = (resolutionScope & 0x3) == 2;
                         if (isAssemblyRef)
                         {
-                            if (stringStream.TryGetValue(nameIndex, out string typeName))
+                            if (stringStream.TryGetValue(nameIndex, out var typeName))
                             {
-                                if (stringStream.TryGetValue(namespaceIndex, out string typeNamespace))
+                                if (stringStream.TryGetValue(namespaceIndex, out var typeNamespace))
                                 {
                                     if (typeName == nameof(IocVisibleAssemblyAttribute) && typeNamespace == @namespace)
                                     {
@@ -584,11 +580,11 @@
         /// <param name="relativeAddress"> The relative virtual address to be resolved. </param>
         /// <param name="absoluteAddress"> The absolute file address or 0. </param>
         /// <returns> True if the address could be resolved, false otherwise. </returns>
-        private bool TryResolveAddress(uint realtiveAddress, out uint absoluteAddress)
+        private bool TryResolveAddress(uint relativeAddress, out uint absoluteAddress)
         {
             foreach (var header in SectionHeaders)
             {
-                if (header.TryResolveAddress(realtiveAddress, out absoluteAddress))
+                if (header.TryResolveAddress(relativeAddress, out absoluteAddress))
                 {
                     return true;
                 }

@@ -1,4 +1,4 @@
-﻿namespace CustomCode.Core.Composition.LightInjectExtensions
+namespace CustomCode.Core.Composition.LightInjectExtensions
 {
     using LightInject;
     using System;
@@ -39,7 +39,7 @@
         private Type ServiceFactoryType { get; }
 
         /// <summary>
-        /// Gets the cached <see cref="MethodInfo"/> for the <see cref="IServiceFactory.GetInstance{TService}()"/> method.
+        /// Gets the cached <see cref="MethodInfo"/> for the <see cref="ServiceFactoryExtensions.GetInstance{TService}(IServiceFactory)"/> method.
         /// </summary>
         private MethodInfo GetInstanceMethod { get; }
 
@@ -85,7 +85,7 @@
         {
             var ctorArgs = new List<ParameterExpression>(paramInfos.Length);
             var factoryArgs = new List<ParameterExpression>(paramInfos.Length + 1);
-            for (int i = 0; i < paramInfos.Length; ++i)
+            for (var i = 0; i < paramInfos.Length; ++i)
             {
                 ctorArgs.Add(Expression.Parameter(paramInfos[i].ParameterType, $"arg{i}"));
             }
@@ -111,7 +111,7 @@
             var factory = Expression.Parameter(ServiceFactoryType, "factory");
             factoryArgs.Add(factory);
 
-            for (int i = 0; i < paramInfos.Length; ++i)
+            for (var i = 0; i < paramInfos.Length; ++i)
             {
                 if (factoryArgsLut.Contains(i))
                 {

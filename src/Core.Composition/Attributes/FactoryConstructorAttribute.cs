@@ -1,11 +1,11 @@
-﻿namespace CustomCode.Core.Composition
+namespace CustomCode.Core.Composition
 {
     using System;
 
     /// <summary>
     /// An attribute that can be used once per type on a single constructor.
     /// The decorated constructor will be used to register a function factory for the type at 
-    /// the <see cref="ServiceContainer"/>.
+    /// the <see cref="LightInject.ServiceContainer"/>.
     /// </summary>
     /// <example>
     /// 

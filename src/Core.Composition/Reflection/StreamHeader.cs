@@ -1,4 +1,4 @@
-﻿namespace CustomCode.Core.Composition.Reflection
+namespace CustomCode.Core.Composition.Reflection
 {
     /// <summary>
     /// This type represents a stream header inside of the clr section of a portable executable.
@@ -10,7 +10,7 @@
         /// <summary>
         /// Creates a new instance of the <see cref="StreamHeader"/> type.
         /// </summary>
-        /// <param name="offset"> The header's relative virtual address. </param>
+        /// <param name="relativeVirtualAddress"> The header's relative virtual address. </param>
         /// <param name="size"> The size of the header in bytes. </param>
         /// <param name="name"> The unique name of the header. </param>
         public StreamHeader(uint relativeVirtualAddress, uint size, string name)

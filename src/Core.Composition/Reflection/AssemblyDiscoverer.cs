@@ -1,4 +1,4 @@
-﻿namespace CustomCode.Core.Composition.Reflection
+namespace CustomCode.Core.Composition.Reflection
 {
     using System;
     using System.Collections.Generic;
@@ -8,20 +8,15 @@
 
     /// <summary>
     /// Discovers a collection of <see cref="Assembly"/>s, that are visible for inversion of control, i.e. assemblies that
-    /// are marked with either the <see cref="IocVisibleAssemblyAttribute"/> or the <see cref="CompositionRootTypeAttribute"/>.
+    /// are marked with either the <see cref="IocVisibleAssemblyAttribute"/> or the <see cref="LightInject.CompositionRootTypeAttribute"/>.
     /// </summary>
-    /// <remarks>
-    /// This class creates a new instance of a <see cref="AssemblyWithAttributeLoader"/> class internally, which does
-    /// the actual ReflectionOnly loading of the <see cref="Assembly"/> into the new <see cref="AppDomain"/>.
-    /// (see http://www.codeproject.com/Articles/42312/Loading-Assemblies-in-Separate-Directories-Into-a/ for more details)
-    /// </remarks>
     public sealed class AssemblyDiscoverer
     {
         #region Logic
 
         /// <summary>
         /// Searches for all assemblies in the current application directory for those that contain
-        /// either the <see cref="IocVisibleAssemblyAttribute"/> or the <see cref="CompositionRootTypeAttribute"/>
+        /// either the <see cref="IocVisibleAssemblyAttribute"/> or the <see cref="LightInject.CompositionRootTypeAttribute"/>
         /// and returns a list with the corresponding assembly paths.
         /// </summary>
         /// <returns> A list with all discovered assembly paths. </returns>
@@ -51,7 +46,7 @@
         /// <summary>
         /// Discover the paths of all assemblies beneath the <paramref name="applicationRootDir"/> that contain
         /// an assembly level attribute either of type <see cref="IocVisibleAssemblyAttribute"/> or
-        /// <see cref="CompositionRootTypeAttribute"/>.
+        /// <see cref="LightInject.CompositionRootTypeAttribute"/>.
         /// </summary>
         /// <param name="applicationRootDir"> The root directory that should be searched. </param>
         /// <returns> A collection with all found assembly paths. </returns>

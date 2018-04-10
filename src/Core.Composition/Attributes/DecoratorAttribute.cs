@@ -1,13 +1,13 @@
-﻿namespace CustomCode.Core.Composition
+namespace CustomCode.Core.Composition
 {
     using System;
 
     /// <summary>
-    /// Use this attribute on the class level to register a type as decorator at the <see cref="ServiceContainer"/>.
+    /// Use this attribute on the class level to register a type as decorator at the <see cref="LightInject.ServiceContainer"/>.
     /// </summary>
     /// <remarks>
     /// This attribute is used in combination with the
-    /// <see cref="ServiceContainerExtensions.UseAttributeConventions(ServiceContainer)"/>
+    /// <see cref="ServiceContainerExtensions.UseAttributeConventions(LightInject.ServiceContainer)"/>
     /// extension method.
     /// </remarks>
     /// <example>
