@@ -2,17 +2,36 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
-    <AssemblyName>CustomCode.Core.Composition</AssemblyName>
-    <RootNamespace>CustomCode.Core.Composition</RootNamespace>
-    <Authors>Stefan Loeffler</Authors>
-    <Company>CustomCode</Company>
-    <Copyright>2016 - 2017</Copyright>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>C#, LightInject, Dependency Injection</PackageTags>
+    <RepositoryUrl>https://github.com/git-custom-code/Core-Composition</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/git-custom-code/Core-Composition</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/git-custom-code/Core-Composition/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard1.6\Core.Composition.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.6\Core.Composition.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+    <Compile Include="..\Shared\SharedAssemblyVersion.cs" Link="Properties\SharedAssemblyVersion.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="LightInject" Version="5.1.1" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
+
+  <Target Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Name="PostBuild" AfterTargets="Pack">
+    <Exec Command="xcopy &quot;$(ProjectDir)bin\Release\*.nupkg&quot; &quot;$(SolutionDir)..\..\.nuget\packages\&quot; /Y /I" />
+  </Target>
 
 </Project>

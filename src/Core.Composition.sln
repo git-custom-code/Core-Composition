@@ -3,9 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Composition", "Core.Composition\Core.Composition.csproj", "{96A0A850-BDFB-4094-833C-F42D3D649834}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Composition", "Core.Composition\Core.Composition.csproj", "{96A0A850-BDFB-4094-833C-F42D3D649834}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Core.Composition", "Test.Core.Composition\Test.Core.Composition.csproj", "{B968F828-C7E3-4FCE-BE0C-4CA635271BDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Core.Composition", "Test.Core.Composition\Test.Core.Composition.csproj", "{B968F828-C7E3-4FCE-BE0C-4CA635271BDD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{56D940BB-5326-4EF4-ABAA-26F4F7176DF6}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2D7EF4A1-5881-489A-9C05-9C445666CC7A}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.config = .nuget\NuGet.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +34,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2D7EF4A1-5881-489A-9C05-9C445666CC7A} = {56D940BB-5326-4EF4-ABAA-26F4F7176DF6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EBA1AE55-B2D6-4C31-A715-B1E3FCAD59CA}

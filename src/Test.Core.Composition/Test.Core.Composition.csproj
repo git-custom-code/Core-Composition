@@ -2,13 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
-
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyName>CustomCode.Test.Core.Composition</AssemblyName>
-
     <RootNamespace>CustomCode.Core.Composition.Test</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+    <Compile Include="..\Shared\SharedAssemblyVersion.cs" Link="Properties\SharedAssemblyVersion.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
