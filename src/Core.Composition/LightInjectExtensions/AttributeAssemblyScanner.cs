@@ -1,4 +1,4 @@
-﻿namespace CustomCode.Core.Composition.LightInjectExtensions
+namespace CustomCode.Core.Composition.LightInjectExtensions
 {
     using LightInject;
     using System;
@@ -115,7 +115,15 @@
         /// <param name="shouldRegister">
         /// A function delegate that determines if a service implementation should be registered.
         /// </param>
-        public void Scan(Assembly assembly, IServiceRegistry serviceRegistry, Func<ILifetime> lifetime, Func<Type, Type, bool> shouldRegister)
+        /// <param name="serviceNameProvider">
+        /// A function delegate used to provide the service name for a service during assembly scanning.
+        /// </param>
+        public void Scan(
+            Assembly assembly,
+            IServiceRegistry serviceRegistry,
+            Func<ILifetime> lifetime,
+            Func<Type, Type, bool> shouldRegister,
+            Func<Type, Type, string> serviceNameProvider)
         {
             var types = TypeExtractor.Execute(assembly);
             foreach (var type in types)

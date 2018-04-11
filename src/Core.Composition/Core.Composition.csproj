@@ -9,6 +9,8 @@
     <RepositoryUrl>https://github.com/git-custom-code/Core-Composition</RepositoryUrl>
     <PackageProjectUrl>https://github.com/git-custom-code/Core-Composition</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/git-custom-code/Core-Composition/blob/master/LICENSE</PackageLicenseUrl>
+    <AssemblyName>Core.Composition</AssemblyName>
+    <RootNamespace>CustomCode.Core.Composition</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -25,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LightInject" Version="5.1.1" />
+    <PackageReference Include="LightInject" Version="5.1.2" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
