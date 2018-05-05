@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard1.6;netstandard2.0</TargetFrameworks>
     <RootNamespace>CustomCode.Core.Composition</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -11,7 +11,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
     <PackageId>CustomCode.Core.Composition</PackageId>
-    <PackageVersion>1.0.2-beta.2</PackageVersion>
+    <PackageVersion>1.0.3-beta.2</PackageVersion>
     <Title>C# attribute conventions for light inject.</Title>
     <Authors>CustomCode</Authors>
     <Company>CustomCode</Company>
@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <PackageReference Include="LightInject" Version="5.1.2" />
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" Condition="'$(TargetFramework)' == 'netstandard1.6'" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 

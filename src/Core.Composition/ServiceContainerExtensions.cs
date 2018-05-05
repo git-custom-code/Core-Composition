@@ -3,7 +3,11 @@ namespace CustomCode.Core.Composition
     using LightInject;
     using LightInjectExtensions;
     using Reflection;
+#if netstandard20
     using System.Reflection;
+#elif netstandard16
+    using System.Runtime.Loader
+#endif
 
     /// <summary>
     /// Extension methods for using attribute conventions with the <see cref="ServiceContainer"/> type.
@@ -39,9 +43,13 @@ namespace CustomCode.Core.Composition
         public static void RegisterIocVisibleAssemblies(this ServiceContainer container, string codeBase = null)
         {
             var assemblyDiscoverer = new AssemblyDiscoverer();
-            foreach(var assemblyPath in assemblyDiscoverer.DiscoverIocVisibleAssemblies(codeBase))
+            foreach (var assemblyPath in assemblyDiscoverer.DiscoverIocVisibleAssemblies(codeBase))
             {
+#if netstandard20
                 container.RegisterAssembly(Assembly.LoadFrom(assemblyPath));
+#elif netstandard16
+                container.RegisterAssembly(AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath));
+#endif
             }
         }
 
