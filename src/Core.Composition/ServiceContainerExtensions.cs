@@ -3,10 +3,10 @@ namespace CustomCode.Core.Composition
     using LightInject;
     using LightInjectExtensions;
     using Reflection;
-#if netstandard20
+#if NETSTANDARD2_0
     using System.Reflection;
-#elif netstandard16
-    using System.Runtime.Loader
+#elif NETSTANDARD1_6
+    using System.Runtime.Loader;
 #endif
 
     /// <summary>
@@ -45,9 +45,9 @@ namespace CustomCode.Core.Composition
             var assemblyDiscoverer = new AssemblyDiscoverer();
             foreach (var assemblyPath in assemblyDiscoverer.DiscoverIocVisibleAssemblies(codeBase))
             {
-#if netstandard20
+#if NETSTANDARD2_0
                 container.RegisterAssembly(Assembly.LoadFrom(assemblyPath));
-#elif netstandard16
+#elif NETSTANDARD1_6
                 container.RegisterAssembly(AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath));
 #endif
             }
