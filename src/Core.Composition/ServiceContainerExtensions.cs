@@ -1,9 +1,9 @@
-﻿namespace CustomCode.Core.Composition
+namespace CustomCode.Core.Composition
 {
     using LightInject;
     using LightInjectExtensions;
     using Reflection;
-    using System.Runtime.Loader;
+    using System.Reflection;
 
     /// <summary>
     /// Extension methods for using attribute conventions with the <see cref="ServiceContainer"/> type.
@@ -41,7 +41,7 @@
             var assemblyDiscoverer = new AssemblyDiscoverer();
             foreach(var assemblyPath in assemblyDiscoverer.DiscoverIocVisibleAssemblies(codeBase))
             {
-                container.RegisterAssembly(AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath));
+                container.RegisterAssembly(Assembly.LoadFrom(assemblyPath));
             }
         }
 

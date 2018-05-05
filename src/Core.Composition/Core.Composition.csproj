@@ -1,24 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <RepositoryType>git</RepositoryType>
-    <PackageTags>C#, LightInject, Dependency Injection</PackageTags>
-    <RepositoryUrl>https://github.com/git-custom-code/Core-Composition</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/git-custom-code/Core-Composition</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/git-custom-code/Core-Composition/blob/master/LICENSE</PackageLicenseUrl>
-    <AssemblyName>Core.Composition</AssemblyName>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>CustomCode.Core.Composition</RootNamespace>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <IsPackable>True</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+    <PackageId>CustomCode.Core.Composition</PackageId>
+    <PackageVersion>1.0.2-beta.2</PackageVersion>
+    <Title>C# attribute conventions for light inject.</Title>
+    <Authors>CustomCode</Authors>
+    <Company>CustomCode</Company>
+    <Description>C# attribute conventions for light inject.</Description>
+    <Copyright>Copyright @ 2018</Copyright>
+    <PackageLicenseUrl>https://github.com/git-custom-code/Core-Composition/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/git-custom-code/Core-Composition</PackageProjectUrl>
+    <PackageTags>C#, LightInject, Dependency Injection</PackageTags>
+    <RepositoryUrl>https://github.com/git-custom-code/Core-Composition</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard1.6\Core.Composition.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.0\Core.Composition.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard1.6\Core.Composition.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.0\Core.Composition.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,7 +39,6 @@
 
   <ItemGroup>
     <PackageReference Include="LightInject" Version="5.1.2" />
-    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 
