@@ -22,7 +22,7 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
         /// </param>
         /// <param name="factoryDelegateBuilder">
         /// A <see cref="IFactoryDelegateBuilder"/> that is responsible for compiling a delegate at runtime
-        /// that is used as a factoy for creating types marked with the <see cref="FactoryConstructorAttribute"/>.
+        /// that is used as a factoy for creating types marked with the <see cref="FactoryParametersAttribute"/>.
         /// </param>
         /// <param name="compositionRootTypeExtractor">
         /// The <see cref="ITypeExtractor"/> that is responsible for extracting <see cref="ICompositionRoot"/> implementations
@@ -52,7 +52,7 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
 
         /// <summary>
         /// Get a <see cref="IFactoryDelegateBuilder"/> that is responsible for compiling a delegate at runtime
-        /// that is used as a factoy for creating types marked with the <see cref="FactoryConstructorAttribute"/>.
+        /// that is used as a factoy for creating types marked with the <see cref="FactoryParametersAttribute"/>.
         /// </summary>
         private IFactoryDelegateBuilder FactoryDelegateBuilder { get; }
 

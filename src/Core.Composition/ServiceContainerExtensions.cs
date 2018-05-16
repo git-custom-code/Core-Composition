@@ -128,33 +128,40 @@ namespace CustomCode.Core.Composition
             var type = service.ImplementingType.GetTypeInfo();
             foreach (var constructor in type.GetConstructors())
             {
-                if (constructor.GetCustomAttribute(typeof(FactoryConstructorAttribute)) is FactoryConstructorAttribute attribute)
+                if (constructor.GetCustomAttribute(typeof(FactoryParametersAttribute)) is FactoryParametersAttribute attribute)
                 {
                     var parameters = constructor.GetParameters();
-                    int[] indices;
-                    if (attribute.ArgumentIndices == null)
+                    var parameterNameLut = new HashSet<string>();
+                    if (attribute.ParameterNames == null)
                     {
-                        indices = new int[parameters.Length];
-                        for (var i = 0; i < parameters.Length; ++i)
+                        foreach(var parameter in parameters)
                         {
-                            indices[i] = i;
+                            parameterNameLut.Add(parameter.Name.ToLowerInvariant());
                         }
                     }
                     else
                     {
-                        indices = attribute.ArgumentIndices;
+                        foreach (var parameter in attribute.ParameterNames)
+                        {
+                            parameterNameLut.Add(parameter.ToLowerInvariant());
+                        }
                     }
 
-                    var arguments = new object[indices.Length];
-                    for (var i = 0; i < indices.Length; ++i)
+                    var arguments = new object[parameterNameLut.Count];
+                    var index = 0;
+                    foreach(var parameter in parameters)
                     {
-                        if (parameters[indices[i]].ParameterType.GetTypeInfo().IsValueType)
+                        if (parameterNameLut.Contains(parameter.Name.ToLowerInvariant()))
                         {
-                            arguments[i] = Activator.CreateInstance(parameters[indices[i]].ParameterType);
-                        }
-                        else
-                        {
-                            arguments[i] = null;
+                            if (parameter.ParameterType.GetTypeInfo().IsValueType)
+                            {
+                                arguments[index] = Activator.CreateInstance(parameter.ParameterType);
+                            }
+                            else
+                            {
+                                arguments[index] = null;
+                            }
+                            ++index;
                         }
                     }
 

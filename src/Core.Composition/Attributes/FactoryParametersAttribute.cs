@@ -14,46 +14,46 @@ namespace CustomCode.Core.Composition
     /// [Export]
     /// public sealed class Foo : IFoo
     /// {
-    ///     [FactoryConstructor]
+    ///     [FactoryParameters]
     ///     public Foo(int id)
     ///     {
     ///         ...
     ///     }
     /// }
     /// 
-    /// Register a function factory that allows to specify the first parameter (id) externally, the
-    /// second parameter (IBar) is resolved using the service container
+    /// Register a function factory that allows to specify the first parameter (id, names or case insensitive) externally,
+    /// the second parameter (IBar) is still resolved using the service container
     /// 
     /// [Export]
     /// public sealed class Foo : IFoo
     /// {
-    ///     [FactoryConstructor(0)]
+    ///     [FactoryParameters(nameof(Id))]
     ///     public Foo(int id, IBar bar)
     ///     {
+    ///         Id = id;
     ///         ...
     ///     }
+    ///
+    ///     public int Id { get; }
     /// }
     /// </example>
     [AttributeUsage(AttributeTargets.Constructor, AllowMultiple = false)]
-    public sealed class FactoryConstructorAttribute : Attribute
+    public sealed class FactoryParametersAttribute : Attribute
     {
         #region Dependencies
 
         /// <summary>
-        /// Default ctor.
+        /// Create a new instance of the <see cref="FactoryParametersAttribute"/> type.
         /// </summary>
-        public FactoryConstructorAttribute()
-        { }
-
-        /// <summary>
-        /// Standard ctor.
-        /// </summary>
-        /// <param name="argumentIndices">
-        /// Indices that specify which constructor arguments should be used as arguments for a function factory.
+        /// <param name="parameterNames">
+        /// The names of the constructor parameters that should be used as parameters for a function factory.
         /// </param>
-        public FactoryConstructorAttribute(params int[] argumentIndices)
+        public FactoryParametersAttribute(params string[] parameterNames)
         {
-            ArgumentIndices = argumentIndices;
+            if (parameterNames?.Length > 0)
+            {
+                ParameterNames = parameterNames;
+            }
         }
 
         #endregion
@@ -61,10 +61,10 @@ namespace CustomCode.Core.Composition
         #region Data
 
         /// <summary>
-        /// Gets a collection that specifies which constructor arguments (specified by index)
-        /// should be used as arguments for a function factory.
+        /// Gets the names of the constructor parameters that should be used as parameters
+        /// for a function factory.
         /// </summary>
-        public int[] ArgumentIndices { get; }
+        public string[] ParameterNames { get; }
 
         #endregion
     }

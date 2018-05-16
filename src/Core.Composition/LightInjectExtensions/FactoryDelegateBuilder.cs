@@ -49,7 +49,7 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
 
         /// <summary>
         /// Create a new dynamically compiled factory delegate for a given <paramref name="type"/>,
-        /// if- and only if- one of the type's constructors is marked with a <see cref="FactoryConstructorAttribute"/>.
+        /// if- and only if- one of the type's constructors is marked with a <see cref="FactoryParametersAttribute"/>.
         /// </summary>
         /// <param name="type"> The type that should be created via a factory. </param>
         /// <returns> A delegate that can create a new instance of the specified <paramref name="type"/>. </returns>
@@ -57,11 +57,11 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
         {
             foreach (var ctor in type.DeclaredConstructors)
             {
-                var factoryData = ctor.GetCustomAttribute<FactoryConstructorAttribute>();
+                var factoryData = ctor.GetCustomAttribute<FactoryParametersAttribute>();
                 if (factoryData != null)
                 {
                     var paramInfos = ctor.GetParameters();
-                    if (factoryData.ArgumentIndices == null)
+                    if (factoryData.ParameterNames == null)
                     {
                         return CreateFactoryDelegate(ctor, paramInfos);
                     }
@@ -100,20 +100,20 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
         /// Create a delegate that is able to call the specified <paramref name="ctor"/>.
         /// </summary>
         /// <param name="ctor"> The constructor to be called by the factory delegate. </param>
-        /// <param name="factoryData"> The <see cref="FactoryConstructorAttribute"/>'s data specified by the developer. </param>
+        /// <param name="factoryData"> The <see cref="FactoryParametersAttribute"/>'s data specified by the developer. </param>
         /// <param name="paramInfos"> The <paramref name="ctor"/>'s parameters. </param>
         /// <returns> A delegate that is able to call the specified <paramref name="ctor"/>. </returns>
-        private Delegate CreateFactoryDelegate(ConstructorInfo ctor, FactoryConstructorAttribute factoryData, ParameterInfo[] paramInfos)
+        private Delegate CreateFactoryDelegate(ConstructorInfo ctor, FactoryParametersAttribute factoryData, ParameterInfo[] paramInfos)
         {
             var ctorArgs = new List<Expression>(paramInfos.Length);
-            var factoryArgs = new List<ParameterExpression>(factoryData.ArgumentIndices.Length);
-            var factoryArgsLut = new HashSet<int>(factoryData.ArgumentIndices);
+            var factoryArgs = new List<ParameterExpression>(factoryData.ParameterNames.Length);
+            var factoryArgsLut = new HashSet<string>(factoryData.ParameterNames.Select(n => n.ToLowerInvariant()));
             var factory = Expression.Parameter(ServiceFactoryType, "factory");
             factoryArgs.Add(factory);
 
             for (var i = 0; i < paramInfos.Length; ++i)
             {
-                if (factoryArgsLut.Contains(i))
+                if (factoryArgsLut.Contains(paramInfos[i].Name.ToLowerInvariant()))
                 {
                     var param = Expression.Parameter(paramInfos[i].ParameterType, $"arg{i}");
                     ctorArgs.Add(param);

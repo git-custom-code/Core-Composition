@@ -32,7 +32,7 @@ namespace CustomCode.Core.Composition.Tests
         [Export]
         public sealed class Foo : IFoo
         {
-            [FactoryConstructor(0)]
+            [FactoryParameters("id")]
             public Foo(int id, IBar bar)
             {
                 Id = id;

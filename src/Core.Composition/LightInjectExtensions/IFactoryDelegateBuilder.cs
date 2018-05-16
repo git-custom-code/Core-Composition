@@ -1,4 +1,4 @@
-﻿namespace CustomCode.Core.Composition.LightInjectExtensions
+namespace CustomCode.Core.Composition.LightInjectExtensions
 {
     using LightInject;
     using System;
@@ -11,7 +11,7 @@
     {
         /// <summary>
         /// Create a new dynamically compiled factory delegate for a given <paramref name="type"/>,
-        /// if- and only if- one of the type's constructors is marked with a <see cref="FactoryConstructorAttribute"/>.
+        /// if- and only if- one of the type's constructors is marked with a <see cref="FactoryParametersAttribute"/>.
         /// </summary>
         /// <param name="type"> The type that should be created via a factory. </param>
         /// <returns> A delegate that can create a new instance of the specified <paramref name="type"/>. </returns>

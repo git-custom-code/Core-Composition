@@ -21,7 +21,7 @@ namespace CustomCode.Core.Composition.Tests
         [Export]
         public sealed class Foo : IFoo
         {
-            [FactoryConstructor]
+            [FactoryParameters]
             public Foo(int id)
             {
                 Id = id;
