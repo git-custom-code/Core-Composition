@@ -2,8 +2,19 @@ namespace CustomCode.Core.Composition.ExceptionHandling
 {
     using System;
 
+    /// <summary>
+    /// Extension methods for the <see cref="Exception"/> type.
+    /// </summary>
     public static class ExceptionExtensions
     {
+        #region Logic
+
+        /// <summary>
+        /// Convert a (lighinject) <paramref name="exception"/> to an <see cref="UnresolvedDependencyException"/>
+        /// -if possible- or null otherwise.
+        /// </summary>
+        /// <param name="exception"> The exception to be converted. </param>
+        /// <returns> The converted exception or null. </returns>
         public static UnresolvedDependencyException AsUnresolvedDependencyException(this Exception exception)
         {
             var invalidOperationException = ExtractUnresolvedDependencyException(exception);
@@ -30,6 +41,12 @@ namespace CustomCode.Core.Composition.ExceptionHandling
             return null;
         }
 
+        /// <summary>
+        /// Extract the <see cref="InvalidOperationException"/> that represents an unresolved dependency from
+        /// lightinject.
+        /// </summary>
+        /// <param name="exception"> The exception to act on. </param>
+        /// <returns> The extracted unresolved dependency exception or null. </returns>
         private static InvalidOperationException ExtractUnresolvedDependencyException(Exception exception)
         {
             var current = exception;
@@ -48,28 +65,13 @@ namespace CustomCode.Core.Composition.ExceptionHandling
 
             return null;
         }
-        
-        private static bool TryFindUnresolvedDependencyMessage(Exception exception, out string errorMessage)
-        {
-            var current = exception;
-            while (current != null)
-            {
-                if (current is InvalidOperationException e)
-                {
-                    if (e.Message.StartsWith("Unresolved dependency", StringComparison.OrdinalIgnoreCase))
-                    {
-                        errorMessage = e.Message;
-                        return true;
-                    }
-                }
 
-                current = current.InnerException;
-            }
-
-            errorMessage = null;
-            return false;
-        }
-        
+        /// <summary>
+        /// Extract a specific part from a lightinject exception message.
+        /// </summary>
+        /// <param name="message"> The message to act on. </param>
+        /// <param name="partIdentifier"> The identifier of the part to be extracted. </param>
+        /// <returns> The extracted part or null. </returns>
         private static string ExtractMessagePart(string message, string partIdentifier)
         {
             var startIndex = message.IndexOf($"[{partIdentifier}: ");
@@ -92,6 +94,11 @@ namespace CustomCode.Core.Composition.ExceptionHandling
             return null;
         }
 
+        /// <summary>
+        /// Extract a c# type name from a string.
+        /// </summary>
+        /// <param name="string"> The string to act on. </param>
+        /// <returns> The extracted type name. </returns>
         private static string ExtractTypeName(string @string)
         {
             var startIndex = @string.LastIndexOf('.');
@@ -117,6 +124,11 @@ namespace CustomCode.Core.Composition.ExceptionHandling
             return @string;
         }
 
+        /// <summary>
+        /// Extract a c# namespace from a string.
+        /// </summary>
+        /// <param name="string"> The string to act on. </param>
+        /// <returns> The extracted namespace. </returns>
         private static string ExtractNamespace(string @string)
         {
             var startIndex = @string.LastIndexOf('.');
@@ -127,5 +139,7 @@ namespace CustomCode.Core.Composition.ExceptionHandling
 
             return null;
         }
+
+        #endregion
     }
 }
