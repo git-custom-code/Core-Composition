@@ -1,7 +1,8 @@
-﻿namespace CustomCode.Core.Composition.Test
+namespace CustomCode.Core.Composition.Tests
 {
     using LightInject;
     using System;
+    using Test.BehaviorDrivenDevelopment;
     using Xunit;
 
     /// <summary>
@@ -9,7 +10,8 @@
     /// it is registerd once using the interface as service contract (no matter if the interface name differs
     /// from the type name or not).
     /// </summary>
-    public sealed class RegisterTypeWithSingleInterface
+    [IntegrationTest]
+    public sealed class RegisterTypeWithSingleInterface : ServiceContainerTestCase
     {
         public interface IBar
         { }
@@ -19,22 +21,23 @@
         { }
 
         [Fact(DisplayName = "Register type with single interface")]
-        [Trait("Category", "IntegrationTest")]
         public void RegisterTypeWithSingleInterfaceSucccess()
         {
-            // Given
-            var rootDir = typeof(RegisterTypeWithSingleInterface).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<IBar>())
+            .Then(foo =>
+                {
+                    foo.ShouldNot().BeNull();
+                    foo.Should().BeOfType<Foo>();
+                });
+        }
 
-            // When
-            var foo = iocContainer.GetInstance<IBar>();
-
-            // Then
-            Assert.NotNull(foo);
-            Assert.IsType<Foo>(foo);
-            Assert.Throws<InvalidOperationException>(() => iocContainer.GetInstance<Foo>());
+        [Fact(DisplayName = "Register type with single interface not by implementation")]
+        public void RegisterTypeWithSingleInterfaceNotByImplementationViolated()
+        {
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<Foo>())
+            .ThenThrow<InvalidOperationException>();
         }
     }
 }

@@ -1,7 +1,8 @@
-﻿namespace CustomCode.Core.Composition.Test
+namespace CustomCode.Core.Composition.Tests
 {
     using LightInject;
     using System;
+    using Test.BehaviorDrivenDevelopment;
     using Xunit;
 
     /// <summary>
@@ -11,7 +12,8 @@
     /// Note that the constructor parameters are specified by (comma-seperated) index.
     /// Note also that parameters that are not specified are resolved using the <see cref="ServiceContainer"/> itself.
     /// </summary>
-    public sealed class RegisterTypePartialFactory
+    [IntegrationTest]
+    public sealed class RegisterTypePartialFactory : ServiceContainerTestCase
     {
         public interface IBar
         { }
@@ -43,47 +45,37 @@
         }
 
         [Fact(DisplayName = "Register type with partial factory")]
-        [Trait("Category", "IntegrationTest")]
         public void RegisterTypePartialFactorySucccess()
         {
-
-            // Given
-            var rootDir = typeof(RegisterTypePartialFactory).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
-
-            // When
-            var foo = iocContainer.GetInstance<int, IFoo>(42);
-
-            // Then
-            Assert.NotNull(foo);
-            Assert.IsType<Foo>(foo);
-            Assert.NotNull(foo.Bar);
-            Assert.IsType<Bar>(foo.Bar);
-            Assert.Equal(42, foo.Id);
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<int, IFoo>(42))
+            .Then(foo =>
+                {
+                    foo.ShouldNot().BeNull();
+                    foo.Should().BeOfType<Foo>();
+                    foo.Bar.ShouldNot().BeNull();
+                    foo.Bar.Should().BeOfType<Bar>();
+                    foo.Id.Should().Be(42);
+                });
         }
 
         [Fact(DisplayName = "Inject type with partial factory")]
-        [Trait("Category", "IntegrationTest")]
         public void InjectTypeFactorySucccess()
         {
-            // Given
-            var rootDir = typeof(RegisterTypePartialFactory).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
-
-            // When
-            var fooFactory = iocContainer.GetInstance<Func<int, IFoo>>();
-            var foo = fooFactory(42);
-
-            // Then
-            Assert.NotNull(foo);
-            Assert.IsType<Foo>(foo);
-            Assert.NotNull(foo.Bar);
-            Assert.IsType<Bar>(foo.Bar);
-            Assert.Equal(42, foo.Id);
+            Given(() => NewServiceContainer())
+            .When(iocContainer =>
+                {
+                    var fooFactory = iocContainer.GetInstance<Func<int, IFoo>>();
+                    return fooFactory(42);
+                })
+            .Then(foo =>
+                {
+                    foo.ShouldNot().BeNull();
+                    foo.Should().BeOfType<Foo>();
+                    foo.Bar.ShouldNot().BeNull();
+                    foo.Bar.Should().BeOfType<Bar>();
+                    foo.Id.Should().Be(42);
+                });
         }
     }
 }

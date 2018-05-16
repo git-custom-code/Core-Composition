@@ -1,13 +1,15 @@
-﻿namespace CustomCode.Core.Composition.Test
+namespace CustomCode.Core.Composition.Tests
 {
     using LightInject;
+    using Test.BehaviorDrivenDevelopment;
     using Xunit;
 
     /// <summary>
     /// Register two or more implementations of the same interface with a service name to be able to
     /// get a specific instance via <see cref="IServiceFactory.GetInstance{TService}(string)"/>.
     /// </summary>
-    public sealed class RegisterTypeWithServiceName
+    [IntegrationTest]
+    public sealed class RegisterTypeWithServiceName : ServiceContainerTestCase
     {
         public interface IFoo
         { }
@@ -21,24 +23,25 @@
         { }
 
         [Fact(DisplayName = "Register type with service name")]
-        [Trait("Category", "IntegrationTest")]
         public void RegisterTypeWithServiceNameSucccess()
         {
-            // Given
-            var rootDir = typeof(RegisterTypeWithServiceName).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
+            Given(() => NewServiceContainer())
+            .When(iocContainer =>
+                {
+                    var foo1 = iocContainer.GetInstance<IFoo>("Foo1");
+                    var foo2 = iocContainer.GetInstance<IFoo>("Foo2");
+                    return (foo1, foo2);
+                })
+            .Then(result =>
+                {
+                    var (foo1, foo2) = result;
 
-            // When
-            var foo1 = iocContainer.GetInstance<IFoo>("Foo1");
-            var foo2 = iocContainer.GetInstance<IFoo>("Foo2");
+                    foo1.ShouldNot().BeNull();
+                    foo2.ShouldNot().BeNull();
 
-            // Then
-            Assert.NotNull(foo1);
-            Assert.NotNull(foo2);
-            Assert.IsType<Foo1>(foo1);
-            Assert.IsType<Foo2>(foo2);
+                    foo1.Should().BeOfType<Foo1>();
+                    foo2.Should().BeOfType<Foo2>();
+                });
         }
     }
 }

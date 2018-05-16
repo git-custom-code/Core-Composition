@@ -1,7 +1,8 @@
-﻿namespace CustomCode.Core.Composition.Test
+namespace CustomCode.Core.Composition.Tests
 {
     using LightInject;
     using System;
+    using Test.BehaviorDrivenDevelopment;
     using Xunit;
 
     /// <summary>
@@ -11,7 +12,8 @@
     /// - a new instance is returned every time <see cref="IServiceFactory.GetInstance{TService}"/>
     ///   is called in a different <see cref="Scope"/>.
     /// </summary>
-    public sealed class RegisterTypeAsScoped
+    [IntegrationTest]
+    public sealed class RegisterTypeAsScoped : ServiceContainerTestCase
     {
         [Export(Lifetime.Scoped)]
         public sealed class Foo
@@ -20,36 +22,38 @@
         }
 
         [Fact(DisplayName = "Register type as scoped")]
-        [Trait("Category", "IntegrationTest")]
         public void RegisterTypeAsScopedSucccess()
         {
-            // Given
-            var rootDir = typeof(RegisterTypeAsScoped).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
-            Foo foo1, foo2, foo3;
+            Given(() => NewServiceContainer())
+            .When(iocContainer =>
+                {
+                    Foo foo, sameScopeFoo, otherScopeFoo;
+                    using (var scope1 = iocContainer.BeginScope())
+                    {
+                        foo = iocContainer.GetInstance<Foo>();
+                        sameScopeFoo = iocContainer.GetInstance<Foo>();
+                    }
+                    using (var scope2 = iocContainer.BeginScope())
+                    {
+                        otherScopeFoo = iocContainer.GetInstance<Foo>();
+                    }
+                    return (foo, sameScopeFoo, otherScopeFoo);
+                })
+            .Then(result =>
+                {
+                    var (foo, sameScopeFoo, otherScopeFoo) = result;
 
-            // When
-            using (var scope1 = iocContainer.BeginScope())
-            {
-                foo1 = iocContainer.GetInstance<Foo>();
-                foo2 = iocContainer.GetInstance<Foo>();
-            }
-            using (var scope2 = iocContainer.BeginScope())
-            {
-                foo3 = iocContainer.GetInstance<Foo>();
-            }
+                    foo.ShouldNot().BeNull();
+                    sameScopeFoo.ShouldNot().BeNull();
+                    otherScopeFoo.ShouldNot().BeNull();
 
-            // Then
-            Assert.NotNull(foo1);
-            Assert.NotNull(foo2);
-            Assert.NotNull(foo3);
-            Assert.IsType<Foo>(foo1);
-            Assert.IsType<Foo>(foo2);
-            Assert.IsType<Foo>(foo3);
-            Assert.Equal(foo1.Id, foo2.Id);
-            Assert.NotEqual(foo1.Id, foo3.Id);
+                    foo.Should().BeOfType<Foo>();
+                    sameScopeFoo.Should().BeOfType<Foo>();
+                    otherScopeFoo.Should().BeOfType<Foo>();
+
+                    foo.Id.Should().Be(sameScopeFoo.Id);
+                    foo.Id.ShouldNot().Be(otherScopeFoo.Id);
+                });
         }
     }
 }

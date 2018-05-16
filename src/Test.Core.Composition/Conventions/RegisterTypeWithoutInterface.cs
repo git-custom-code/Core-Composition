@@ -1,34 +1,30 @@
-﻿namespace CustomCode.Core.Composition.Test
+namespace CustomCode.Core.Composition.Tests
 {
     using LightInject;
+    using Test.BehaviorDrivenDevelopment;
     using Xunit;
 
     /// <summary>
     /// If the type implements no interfaces and is registerd with a plain <see cref="ExportAttribute"/>
     /// it is registerd once using the type as service contract.
     /// </summary>
-    public sealed class RegisterTypeWithoutInterface
+    [IntegrationTest]
+    public sealed class RegisterTypeWithoutInterface : ServiceContainerTestCase
     {
         [Export]
         public sealed class Foo
         { }
 
         [Fact(DisplayName = "Register type without intereface")]
-        [Trait("Category", "IntegrationTest")]
         public void RegisterTypeWithoutInterfaceSuccess()
         {
-            // Given
-            var rootDir = typeof(RegisterTypeWithoutInterface).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
-
-            // When
-            var foo = iocContainer.GetInstance<Foo>();
-
-            // Then
-            Assert.NotNull(foo);
-            Assert.IsType<Foo>(foo);
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<Foo>())
+            .Then(foo =>
+                {
+                    foo.ShouldNot().BeNull();
+                    foo.Should().BeOfType<Foo>();
+                });
         }
     }
 }

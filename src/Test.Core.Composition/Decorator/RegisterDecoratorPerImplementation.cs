@@ -1,6 +1,7 @@
-﻿namespace CustomCode.Core.Composition.Test
+namespace CustomCode.Core.Composition.Tests
 {
     using LightInject;
+    using Test.BehaviorDrivenDevelopment;
     using Xunit;
 
     /// <summary>
@@ -8,7 +9,8 @@
     /// only for one specific implementation you can use the <see cref="DecoratedByAttribute"/> in combination
     /// with the <see cref="ExportAttribute"/>.
     /// </summary>
-    public sealed class RegisterDecoratorPerImplementation
+    [IntegrationTest]
+    public sealed class RegisterDecoratorPerImplementation : ServiceContainerTestCase
     {
         public interface IFoo
         { }
@@ -34,26 +36,26 @@
 
 
         [Fact(DisplayName = "Register decorator per implementation")]
-        [Trait("Category", "IntegrationTest")]
         public void RegisterDecoratorPerImplementationSucccess()
         {
-            // Given
-            var rootDir = typeof(RegisterDecoratorPerImplementation).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
+            Given(() => NewServiceContainer())
+            .When(iocContainer =>
+                {
+                    var foo1 = iocContainer.GetInstance<IFoo>("Foo1");
+                    var foo2 = iocContainer.GetInstance<IFoo>("Foo2");
+                    return (foo1, foo2);
+                })
+            .Then(result =>
+                {
+                    var (foo1, foo2) = result;
 
-            // When
-            var foo1 = iocContainer.GetInstance<IFoo>("Foo1");
-            var foo2 = iocContainer.GetInstance<IFoo>("Foo2");
+                    foo1.ShouldNot().BeNull();
+                    foo1.Should().BeOfType<Foo1>();
 
-            // Then
-            Assert.NotNull(foo1);
-            Assert.IsType<Foo1>(foo1);
-
-            Assert.NotNull(foo2);
-            Assert.IsType<FooDecorator>(foo2);
-            Assert.IsType<Foo2>(((FooDecorator)foo2).DecoratedFoo);
+                    foo2.ShouldNot().BeNull();
+                    foo2.Should().BeOfType<FooDecorator>();
+                    ((FooDecorator)foo2).DecoratedFoo.Should().BeOfType<Foo2>();
+                });
         }
     }
 }

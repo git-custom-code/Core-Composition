@@ -1,13 +1,15 @@
-﻿namespace CustomCode.Core.Composition.Test
+namespace CustomCode.Core.Composition.Tests
 {
     using LightInject;
+    using Test.BehaviorDrivenDevelopment;
     using Xunit;
 
     /// <summary>
     /// If two or more implementations of the same interface are register with different service names, you can
     /// use the <see cref="ImportAttribute"/> to get a specific instance by name.
     /// </summary>
-    public sealed class ImportTypeByServiceName
+    [IntegrationTest]
+    public sealed class ImportTypeByServiceName : ServiceContainerTestCase
     {
         public interface IFoo
         { }
@@ -32,22 +34,16 @@
         }
 
         [Fact(DisplayName = "Import type by service name")]
-        [Trait("Category", "IntegrationTest")]
         public void ImportTypeByServiceNameSucccess()
         {
-            // Given
-            var rootDir = typeof(RegisterTypeWithServiceName).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
-
-            // When
-            var bar = iocContainer.GetInstance<Bar>();
-
-            // Then
-            Assert.NotNull(bar);
-            Assert.NotNull(bar.Foo);
-            Assert.IsType<Foo1>(bar.Foo);
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<Bar>())
+            .Then(bar =>
+                {
+                    bar.ShouldNot().BeNull();
+                    bar.Foo.ShouldNot().BeNull();
+                    bar.Foo.Should().BeOfType<Foo1>();
+                });
         }
     }
 }

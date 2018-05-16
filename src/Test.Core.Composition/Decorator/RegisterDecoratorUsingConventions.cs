@@ -1,6 +1,7 @@
-﻿namespace CustomCode.Core.Composition.Test
+namespace CustomCode.Core.Composition.Tests
 {
     using LightInject;
+    using Test.BehaviorDrivenDevelopment;
     using Xunit;
 
     /// <summary>
@@ -9,7 +10,8 @@
     /// <see cref="DecoratorAttribute"/> at the class level to register a decorator at the
     /// <see cref="ServiceContainer"/>.
     /// </summary>
-    public sealed class RegisterDecoratorUsingConventions
+    [IntegrationTest]
+    public sealed class RegisterDecoratorUsingConventions : ServiceContainerTestCase
     {
         public interface IFoo
         { }
@@ -17,7 +19,7 @@
         [Export]
         public sealed class Foo : IFoo
         { }
-        
+
         [Decorator]
         public sealed class FooDecorator : IFoo
         {
@@ -31,22 +33,16 @@
 
 
         [Fact(DisplayName = "Register decorator using conventions")]
-        [Trait("Category", "IntegrationTest")]
         public void RegisterDecoratorUsingConventionsSucccess()
         {
-            // Given
-            var rootDir = typeof(RegisterDecoratorUsingConventions).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
-
-            // When
-            var foo = iocContainer.GetInstance<IFoo>();
-
-            // Then
-            Assert.NotNull(foo);
-            Assert.IsType<FooDecorator>(foo);
-            Assert.IsType<Foo>(((FooDecorator)foo).DecoratedFoo);
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<IFoo>())
+            .Then(foo =>
+                {
+                    foo.ShouldNot().BeNull();
+                    foo.Should().BeOfType<FooDecorator>();
+                    ((FooDecorator)foo).DecoratedFoo.Should().BeOfType<Foo>();
+                });
         }
     }
 }

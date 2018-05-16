@@ -1,7 +1,8 @@
-﻿namespace CustomCode.Core.Composition.Test
+namespace CustomCode.Core.Composition.Tests
 {
     using LightInject;
     using System;
+    using Test.BehaviorDrivenDevelopment;
     using Xunit;
 
     /// <summary>
@@ -9,7 +10,8 @@
     /// that can be used to pass all constructor parameters via one of the <see cref="ServiceContainer"/>'s
     /// factory method overloads.
     /// </summary>
-    public sealed class RegisterTypeFactory
+    [IntegrationTest]
+    public sealed class RegisterTypeFactory : ServiceContainerTestCase
     {
         public interface IFoo
         {
@@ -29,42 +31,33 @@
         }
 
         [Fact(DisplayName = "Register type factory")]
-        [Trait("Category", "IntegrationTest")]
         public void RegisterTypeFactorySucccess()
         {
-            // Given
-            var rootDir = typeof(RegisterTypeFactory).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
-
-            // When
-            var foo = iocContainer.GetInstance<int, IFoo>(42);
-
-            // Then
-            Assert.NotNull(foo);
-            Assert.IsType<Foo>(foo);
-            Assert.Equal(42, foo.Id);
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<int, IFoo>(42))
+            .Then(foo =>
+                {
+                    foo.ShouldNot().BeNull();
+                    foo.Should().BeOfType<Foo>();
+                    foo.Id.Should().Be(42);
+                });
         }
 
         [Fact(DisplayName = "Inject type factory")]
-        [Trait("Category", "IntegrationTest")]
         public void InjectTypeFactorySucccess()
         {
-            // Given
-            var rootDir = typeof(RegisterTypeFactory).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
-
-            // When
-            var fooFactory = iocContainer.GetInstance<Func<int, IFoo>>();
-            var foo = fooFactory(42);
-
-            // Then
-            Assert.NotNull(foo);
-            Assert.IsType<Foo>(foo);
-            Assert.Equal(42, foo.Id);
+            Given(() => NewServiceContainer())
+            .When(iocContainer =>
+                {
+                    var fooFactory = iocContainer.GetInstance<Func<int, IFoo>>();
+                    return fooFactory(42);
+                })
+            .Then(foo =>
+                {
+                    foo.ShouldNot().BeNull();
+                    foo.Should().BeOfType<Foo>();
+                    foo.Id.Should().Be(42);
+                });
         }
     }
 }

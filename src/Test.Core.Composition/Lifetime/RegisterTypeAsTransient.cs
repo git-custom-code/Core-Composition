@@ -1,14 +1,16 @@
-﻿namespace CustomCode.Core.Composition.Test
+namespace CustomCode.Core.Composition.Tests
 {
     using LightInject;
     using System;
+    using Test.BehaviorDrivenDevelopment;
     using Xunit;
 
     /// <summary>
     /// If the type is registerd with <see cref="Lifetime.Transient"/> a new instance is created
     /// every time <see cref="IServiceFactory.GetInstance{TService}"/> is called.
     /// </summary>
-    public sealed class RegisterTypeAsTransient
+    [IntegrationTest]
+    public sealed class RegisterTypeAsTransient : ServiceContainerTestCase
     {
         [Export(Lifetime.Transient)]
         public sealed class Foo
@@ -17,25 +19,27 @@
         }
 
         [Fact(DisplayName = "Register type as transient")]
-        [Trait("Category", "IntegrationTest")]
         public void RegisterTypeAsTransientSucccess()
         {
-            // Given
-            var rootDir = typeof(RegisterTypeAsTransient).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
+            Given(() => NewServiceContainer())
+            .When(iocContainer =>
+                {
+                    var foo = iocContainer.GetInstance<Foo>();
+                    var otherFoo = iocContainer.GetInstance<Foo>();
+                    return (foo, otherFoo);
+                })
+            .Then(result =>
+                {
+                    var (foo, otherFoo) = result;
 
-            // When
-            var foo1 = iocContainer.GetInstance<Foo>();
-            var foo2 = iocContainer.GetInstance<Foo>();
+                    foo.ShouldNot().BeNull();
+                    otherFoo.ShouldNot().BeNull();
 
-            // Then
-            Assert.NotNull(foo1);
-            Assert.NotNull(foo2);
-            Assert.IsType<Foo>(foo1);
-            Assert.IsType<Foo>(foo2);
-            Assert.NotEqual(foo1.Id, foo2.Id);
+                    foo.Should().BeOfType<Foo>();
+                    otherFoo.Should().BeOfType<Foo>();
+
+                    foo.Id.ShouldNot().Be(otherFoo.Id);
+                });
         }
     }
 }

@@ -1,7 +1,8 @@
-﻿namespace CustomCode.Core.Composition.Test
+namespace CustomCode.Core.Composition.Tests
 {
     using LightInject;
     using System;
+    using Test.BehaviorDrivenDevelopment;
     using Xunit;
 
     /// <summary>
@@ -9,7 +10,8 @@
     /// use the <see cref="ExportAttribute.ServiceType"/> property to specify the type of the service contract
     /// explicitely. You can even use multiple attributes, if you need to specify multiple service contracts.
     /// </summary>
-    public sealed class RegisterTypeWithServiceType
+    [IntegrationTest]
+    public sealed class RegisterTypeWithServiceType : ServiceContainerTestCase
     {
         public interface IFoo
         { }
@@ -22,23 +24,31 @@
         { }
 
         [Fact(DisplayName = "Register type with explicite service type")]
-        [Trait("Category", "IntegrationTest")]
         public void RegisterTypeWithServiceTypeSucccess()
         {
-            // Given
-            var rootDir = typeof(RegisterTypeWithServiceType).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<IBar>())
+            .Then(foo =>
+                {
+                    foo.ShouldNot().BeNull();
+                    foo.Should().BeOfType<Foo>();
+                });
+        }
 
-            // When
-            var foo = iocContainer.GetInstance<IBar>();
+        [Fact(DisplayName = "Register type with explicite service type but not other interface")]
+        public void RegisterTypeWithServiceTypeButNotWithOtherViolated()
+        {
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<IFoo>())
+            .ThenThrow<InvalidOperationException>();
+        }
 
-            // Then
-            Assert.NotNull(foo);
-            Assert.IsType<Foo>(foo);
-            Assert.Throws<InvalidOperationException>(() => iocContainer.GetInstance<IFoo>());
-            Assert.Throws<InvalidOperationException>(() => iocContainer.GetInstance<Foo>());
+        [Fact(DisplayName = "Register type with explicite service type but not implentation")]
+        public void RegisterTypeWithServiceTypeNotImplementationViolated()
+        {
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<Foo>())
+            .ThenThrow<InvalidOperationException>();
         }
     }
 }

@@ -1,7 +1,8 @@
-﻿namespace CustomCode.Core.Composition.Test
+namespace CustomCode.Core.Composition.Tests
 {
     using LightInject;
     using System;
+    using Test.BehaviorDrivenDevelopment;
     using Xunit;
 
     /// <summary>
@@ -9,7 +10,8 @@
     /// it is registerd only once, if -and only if- one interface has the same name as the type (ignoring a leading "I")
     /// using the interface as service contract.
     /// </summary>
-    public sealed class RegisterTypeWithSameNamedInterface
+    [IntegrationTest]
+    public sealed class RegisterTypeWithSameNamedInterface : ServiceContainerTestCase
     {
         public interface IBar
         { }
@@ -22,23 +24,31 @@
         { }
 
         [Fact(DisplayName = "Register type with same-named interface")]
-        [Trait("Category", "IntegrationTest")]
         public void RegisterTypeWithSameNamedInterfaceSuccess()
         {
-            // Given
-            var rootDir = typeof(RegisterTypeWithSameNamedInterface).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
+            Given(() => NewServiceContainer())
+            .When(iocContainer =>iocContainer.GetInstance<IFoo>())
+            .Then(foo =>
+                {
+                    foo.ShouldNot().BeNull();
+                    foo.Should().BeOfType<Foo>();
+                });
+        }
 
-            // When
-            var foo = iocContainer.GetInstance<IFoo>();
+        [Fact(DisplayName = "Register type with same-named interface not by other interface")]
+        public void RegisterTypeWithSameNamedInterfaceButNotByOtherViolated()
+        {
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<IBar>())
+            .ThenThrow<InvalidOperationException>();
+        }
 
-            // Then
-            Assert.NotNull(foo);
-            Assert.IsType<Foo>(foo);
-            Assert.Throws<InvalidOperationException>(() => iocContainer.GetInstance<IBar>());
-            Assert.Throws<InvalidOperationException>(() => iocContainer.GetInstance<Foo>());
+        [Fact(DisplayName = "Register type with same-named interface not by implementation")]
+        public void RegisterTypeWithSameNamedInterfaceNotByImplementationViolated()
+        {
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<Foo>())
+            .ThenThrow<InvalidOperationException>();
         }
     }
 }

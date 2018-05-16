@@ -1,7 +1,8 @@
-﻿namespace CustomCode.Core.Composition.Test
+namespace CustomCode.Core.Composition.Tests
 {
     using LightInject;
     using System;
+    using Test.BehaviorDrivenDevelopment;
     using Xunit;
 
     /// <summary>
@@ -9,7 +10,8 @@
     /// it is registerd multiple times (once for each interface with the interface as service contract),
     /// if -and only if- all interface names differ from the type name.
     /// </summary>
-    public sealed class RegisterTypeWithMultipleInterfaces
+    [IntegrationTest]
+    public sealed class RegisterTypeWithMultipleInterfaces : ServiceContainerTestCase
     {
         public interface IFoo
         { }
@@ -20,27 +22,37 @@
         [Export]
         public sealed class FooBar : IFoo, IBar
         { }
-
-        [Fact(DisplayName = "Register type with multiple interfaces")]
-        [Trait("Category", "IntegrationTest")]
-        public void RegisterTypeWithMultipleInterfacesSucccess()
+        
+        [Fact(DisplayName = "Register type with multiple interfaces with first interface")]
+        public void RegisterTypeWithMultipleInterfacesWithFirstSucccess()
         {
-            // Given
-            var rootDir = typeof(RegisterTypeWithMultipleInterfaces).Assembly.Location;
-            var iocContainer = new ServiceContainer();
-            iocContainer.UseAttributeConventions();
-            iocContainer.RegisterIocVisibleAssemblies(rootDir);
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<IFoo>())
+            .Then(foo =>
+                {
+                    foo.ShouldNot().BeNull();
+                    foo.Should().BeOfType<FooBar>();
+                });
+        }
 
-            // When
-            var foo1 = iocContainer.GetInstance<IFoo>();
-            var foo2 = iocContainer.GetInstance<IBar>();
+        [Fact(DisplayName = "Register type with multiple interfaces with second interface")]
+        public void RegisterTypeWithMultipleInterfacesWithSecondSucccess()
+        {
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<IBar>())
+            .Then(foo =>
+                {
+                    foo.ShouldNot().BeNull();
+                    foo.Should().BeOfType<FooBar>();
+                });
+        }
 
-            // Then
-            Assert.NotNull(foo1);
-            Assert.NotNull(foo2);
-            Assert.IsType<FooBar>(foo1);
-            Assert.IsType<FooBar>(foo2);
-            Assert.Throws<InvalidOperationException>(() => iocContainer.GetInstance<FooBar>());
+        [Fact(DisplayName = "Register type with multiple interfaces not by implementation")]
+        public void RegisterTypeWithMultipleInterfacesNotByImplementationViolated()
+        {
+            Given(() => NewServiceContainer())
+            .When(iocContainer => iocContainer.GetInstance<FooBar>())
+            .ThenThrow<InvalidOperationException>();
         }
     }
 }
