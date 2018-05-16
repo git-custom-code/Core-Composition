@@ -38,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CustomCode.Core.ExceptionHandling" Version="1.1.0" />
     <PackageReference Include="LightInject" Version="5.1.2" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" Condition="'$(TargetFramework)' == 'netstandard1.6'" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
