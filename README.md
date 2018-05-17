@@ -5,3 +5,5 @@ Attribute conventions for the excellent [LightInject](https://github.com/seeshar
 [Conventions](https://github.com/git-custom-code/Core-Composition/wiki/Conventions)
 
 [Decorators](https://github.com/git-custom-code/Core-Composition/wiki/Decorators)
+
+[Lifetime](https://github.com/git-custom-code/Core-Composition/wiki/Lifetime)
