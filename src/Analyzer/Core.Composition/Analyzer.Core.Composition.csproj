@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <RootNamespace>CustomCode.Analyzer.Core.Composition</RootNamespace>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <PropertyGroup>
+      <IsPackable>True</IsPackable>
+      <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+      <PackageId>CustomCode.Analyzer.Core.Composition</PackageId>
+      <PackageVersion>2.0.0</PackageVersion>
+      <Title>Roslyn analyzer for C# attribute conventions for light inject.</Title>
+      <Authors>CustomCode</Authors>
+      <Company>CustomCode</Company>
+      <Description>Roslyn analyzer for C# attribute conventions for light inject.</Description>
+      <Copyright>Copyright @ 2018</Copyright>
+      <PackageLicenseUrl>https://github.com/git-custom-code/Core-Composition/blob/master/LICENSE</PackageLicenseUrl>
+      <PackageProjectUrl>https://github.com/git-custom-code/Core-Composition</PackageProjectUrl>
+      <PackageTags>C#, LightInject, Dependency Injection, Roslyn analyzer</PackageTags>
+      <RepositoryUrl>https://github.com/git-custom-code/Core-Composition</RepositoryUrl>
+      <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard1.6\Analyzer.Core.Composition.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.6\Analyzer.Core.Composition.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\Shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+    <Compile Include="..\..\Shared\SharedAssemblyVersion.cs" Link="Properties\SharedAssemblyVersion.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core.Composition\Core.Composition.csproj" />
+  </ItemGroup>
+
+  <Target Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Name="PostBuild" AfterTargets="Pack">
+      <Exec Command="xcopy &quot;$(ProjectDir)bin\Release\*.nupkg&quot; &quot;$(SolutionDir)..\..\..\.nuget\packages\&quot; /Y /I" />
+  </Target>
+
+</Project>
