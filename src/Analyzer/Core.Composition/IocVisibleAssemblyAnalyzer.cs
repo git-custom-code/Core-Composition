@@ -1,6 +1,5 @@
 namespace CustomCode.Analyzer.Core.Composition
 {
-    using CustomCode.Core.Composition;
     using Extensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -10,7 +9,7 @@ namespace CustomCode.Analyzer.Core.Composition
 
     /// <summary>
     /// A roslyn <see cref="DiagnosticAnalyzer"/> that checks if an assembly that contains at least one
-    /// type with an <see cref="ExportAttribute"/> has an <see cref="IocVisibleAssemblyAttribute"/> defined.
+    /// type with an export attribute has an ioc visible assembly attribute defined.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class IocVisibleAssemblyAnalyzer : DiagnosticAnalyzer
@@ -52,8 +51,8 @@ namespace CustomCode.Analyzer.Core.Composition
         #region Logic
 
         /// <summary>
-        /// Check if any <see cref="ExportAttribute"/> are defined and if so if the assembly contains
-        /// an <see cref="IocVisibleAssemblyAttribute"/>.
+        /// Check if any export attributes are defined and if so if the assembly contains
+        /// an ioc visible assembly attribute.
         /// </summary>
         /// <param name="context"> The analysis context that contains the attribute <see cref="SyntaxNode"/>. </param>
         private void AnalyzeExportAttributes(SyntaxNodeAnalysisContext context)
@@ -66,7 +65,7 @@ namespace CustomCode.Analyzer.Core.Composition
             }
 
             var symbol = context.SemanticModel.GetTypeInfo(attributeNode.Name);
-            if (symbol.Type?.Name == nameof(ExportAttribute) &&
+            if (symbol.Type?.Name == "ExportAttribute" &&
                 symbol.Type.GetNamespace() == Constants.CompositionNamespace)
             {
                 if (!HasIocVisibleAssemblyAttribute(context))
@@ -82,10 +81,10 @@ namespace CustomCode.Analyzer.Core.Composition
         }
 
         /// <summary>
-        /// Check if the analyzed assembly has an <see cref="IocVisibleAssemblyAttribute"/> defined.
+        /// Check if the analyzed assembly has an ioc visible assembly attribute defined.
         /// </summary>
         /// <param name="context"> The analysis context that contains the syntax tree(s) of the analyzed assembly. </param>
-        /// <returns> True if an <see cref="IocVisibleAssemblyAttribute"/> was found, false otherwise. </returns>
+        /// <returns> True if an ioc visible assembly attribute was found, false otherwise. </returns>
         private bool HasIocVisibleAssemblyAttribute(SyntaxNodeAnalysisContext context)
         {
             if (context.Compilation == null)
@@ -98,7 +97,7 @@ namespace CustomCode.Analyzer.Core.Composition
             {
                 foreach (var attribute in attributes)
                 {
-                    if (attribute.AttributeClass.Name == nameof(IocVisibleAssemblyAttribute) &&
+                    if (attribute.AttributeClass.Name == "IocVisibleAssemblyAttribute" &&
                         attribute.AttributeClass.GetNamespace() == Constants.CompositionNamespace)
                     {
                         return true;

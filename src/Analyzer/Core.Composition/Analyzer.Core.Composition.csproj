@@ -7,29 +7,39 @@
   </PropertyGroup>
 
   <PropertyGroup>
-      <IsPackable>True</IsPackable>
-      <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-
-      <PackageId>CustomCode.Analyzer.Core.Composition</PackageId>
-      <PackageVersion>2.0.0</PackageVersion>
-      <Title>Roslyn analyzer for C# attribute conventions for light inject.</Title>
-      <Authors>CustomCode</Authors>
-      <Company>CustomCode</Company>
-      <Description>Roslyn analyzer for C# attribute conventions for light inject.</Description>
-      <Copyright>Copyright @ 2018</Copyright>
-      <PackageLicenseUrl>https://github.com/git-custom-code/Core-Composition/blob/master/LICENSE</PackageLicenseUrl>
-      <PackageProjectUrl>https://github.com/git-custom-code/Core-Composition</PackageProjectUrl>
-      <PackageTags>C#, LightInject, Dependency Injection, Roslyn analyzer</PackageTags>
-      <RepositoryUrl>https://github.com/git-custom-code/Core-Composition</RepositoryUrl>
-      <RepositoryType>git</RepositoryType>
+    <BeforePack>$(BeforePack);SetNuspecProperties</BeforePack>
+    <IsPackable>True</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NuspecFile>.nuget\.nuspec</NuspecFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard1.6\Analyzer.Core.Composition.xml</DocumentationFile>
+  <PropertyGroup>
+    <Multiline>System.Text.RegularExpressions.RegexOptions.Multiline</Multiline>
+    <In>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\Properties\AssemblyInfo.cs'))</In>
+    <Pattern>^\s*\[assembly: AssemblyDescription\(\s*"([^"]+)"</Pattern>
+    <AssemblyDescription>$([System.Text.RegularExpressions.Regex]::Match($(In), $(Pattern), $(Multiline)).Groups[1].Value)</AssemblyDescription>
+    <In>$([System.IO.File]::ReadAllText('$(SolutionDir)\Shared\SharedAssemblyInfo.cs'))</In>
+    <Pattern>^\s*\[assembly: AssemblyCompany\(\s*"([^"]+)"</Pattern>
+    <AssemblyCompany>$([System.Text.RegularExpressions.Regex]::Match($(In), $(Pattern), $(Multiline)).Groups[1].Value)</AssemblyCompany>
+    <Pattern>^\s*\[assembly: AssemblyCopyright\(\s*"([^"]+)"</Pattern>
+    <AssemblyCopyright>$([System.Text.RegularExpressions.Regex]::Match($(In), $(Pattern), $(Multiline)).Groups[1].Value)</AssemblyCopyright>
+    <In>$([System.IO.File]::ReadAllText('$(SolutionDir)\Shared\SharedAssemblyVersion.cs'))</In>
+    <Pattern>\[assembly: AssemblyInformationalVersion\("([\d.]+[0-9A-Za-z-.]*)?</Pattern>
+    <AssemblyVersion>$([System.Text.RegularExpressions.Regex]::Match($(In), $(Pattern), $(Multiline)).Groups[1].Value)</AssemblyVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard1.6\Analyzer.Core.Composition.xml</DocumentationFile>
+  <Target Name="SetNuspecProperties">
+    <PropertyGroup>
+      <NuspecProperties>$(NuspecProperties);version=$(AssemblyVersion)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);title=$(AssemblyDescription)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);author=$(AssemblyCompany)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);copyright=$(AssemblyCopyright)</NuspecProperties>
+      <NuspecBasePath>$(OutDir)</NuspecBasePath>
+    </PropertyGroup>
+  </Target>
+
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\netstandard1.6\Analyzer.Core.Composition.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,15 +48,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.8.0" />
+    <None Include=".nuget\.nuspec" />
+    <None Include=".nuget\install.ps1" CopyToOutputDirectory="PreserveNewest" />
+    <None Include=".nuget\uninstall.ps1" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core.Composition\Core.Composition.csproj" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.8.0" />
+    <PackageReference Update="NETStandard.Library" />
   </ItemGroup>
 
   <Target Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Name="PostBuild" AfterTargets="Pack">
-      <Exec Command="xcopy &quot;$(ProjectDir)bin\Release\*.nupkg&quot; &quot;$(SolutionDir)..\..\..\.nuget\packages\&quot; /Y /I" />
+    <Exec Command="xcopy &quot;$(ProjectDir)bin\Release\*.nupkg&quot; &quot;$(SolutionDir)..\..\.nuget\packages\&quot; /Y /I" />
   </Target>
 
 </Project>
