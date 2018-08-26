@@ -22,7 +22,7 @@ namespace CustomCode.Analyzer.Core.Composition
         public IocVisibleAssemblyAnalyzer()
         {
             Rule = new DiagnosticDescriptor(
-                id: "CCA0001",
+                id: "CC001",
                 title: "Missing IocVisibleAssembly attribute",
                 messageFormat: "Type \"{0}\" is marked for export but no IocVisibleAssembly attribute was defined in assembly \"{1}\"",
                 category: "Core.Composition",
