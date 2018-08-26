@@ -11,7 +11,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
     <PackageId>CustomCode.Core.Composition</PackageId>
-    <PackageVersion>2.0.0</PackageVersion>
+    <PackageVersion>2.2.0-alpha.1</PackageVersion>
     <Title>C# attribute conventions for light inject.</Title>
     <Authors>CustomCode</Authors>
     <Company>CustomCode</Company>
