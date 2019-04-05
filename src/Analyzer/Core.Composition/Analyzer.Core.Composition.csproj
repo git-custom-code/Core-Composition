@@ -2,50 +2,30 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
+    <Title>Analyzer.Core.Composition</Title>
+    <Description>Roslyn analyzer for C# attribute conventions for light inject</Description>
     <RootNamespace>CustomCode.Analyzer.Core.Composition</RootNamespace>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <PropertyGroup>
     <BeforePack>$(BeforePack);SetNuspecProperties</BeforePack>
-    <IsPackable>True</IsPackable>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NuspecFile>.nuget\.nuspec</NuspecFile>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <Multiline>System.Text.RegularExpressions.RegexOptions.Multiline</Multiline>
-    <In>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\Properties\AssemblyInfo.cs'))</In>
-    <Pattern>^\s*\[assembly: AssemblyDescription\(\s*"([^"]+)"</Pattern>
-    <AssemblyDescription>$([System.Text.RegularExpressions.Regex]::Match($(In), $(Pattern), $(Multiline)).Groups[1].Value)</AssemblyDescription>
-    <In>$([System.IO.File]::ReadAllText('$(SolutionDir)\Shared\SharedAssemblyInfo.cs'))</In>
-    <Pattern>^\s*\[assembly: AssemblyCompany\(\s*"([^"]+)"</Pattern>
-    <AssemblyCompany>$([System.Text.RegularExpressions.Regex]::Match($(In), $(Pattern), $(Multiline)).Groups[1].Value)</AssemblyCompany>
-    <Pattern>^\s*\[assembly: AssemblyCopyright\(\s*"([^"]+)"</Pattern>
-    <AssemblyCopyright>$([System.Text.RegularExpressions.Regex]::Match($(In), $(Pattern), $(Multiline)).Groups[1].Value)</AssemblyCopyright>
-    <In>$([System.IO.File]::ReadAllText('$(SolutionDir)\Shared\SharedAssemblyVersion.cs'))</In>
-    <Pattern>\[assembly: AssemblyInformationalVersion\("([\d.]+[0-9A-Za-z-.]*)?</Pattern>
-    <AssemblyVersion>$([System.Text.RegularExpressions.Regex]::Match($(In), $(Pattern), $(Multiline)).Groups[1].Value)</AssemblyVersion>
   </PropertyGroup>
 
   <Target Name="SetNuspecProperties">
     <PropertyGroup>
-      <NuspecProperties>$(NuspecProperties);version=$(AssemblyVersion)</NuspecProperties>
-      <NuspecProperties>$(NuspecProperties);title=$(AssemblyDescription)</NuspecProperties>
-      <NuspecProperties>$(NuspecProperties);author=$(AssemblyCompany)</NuspecProperties>
-      <NuspecProperties>$(NuspecProperties);copyright=$(AssemblyCopyright)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);version=$(SemVer)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);title=$(AssemblyTitle)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);author=$(Authors)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);copyright=$(Copyright)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);description=$(Description)</NuspecProperties>
       <NuspecBasePath>$(OutDir)</NuspecBasePath>
     </PropertyGroup>
   </Target>
 
   <PropertyGroup>
-    <DocumentationFile>bin\$(Configuration)\netstandard1.6\Analyzer.Core.Composition.xml</DocumentationFile>
+    <NoWarn>NU5105</NoWarn>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="..\..\Shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
-    <Compile Include="..\..\Shared\SharedAssemblyVersion.cs" Link="Properties\SharedAssemblyVersion.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include=".nuget\.nuspec" />
@@ -57,9 +37,5 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.9.0" />
     <PackageReference Update="NETStandard.Library" />
   </ItemGroup>
-
-  <Target Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Name="PostBuild" AfterTargets="Pack">
-    <Exec Command="xcopy &quot;$(ProjectDir)bin\Release\*.nupkg&quot; &quot;$(SolutionDir)..\..\.nuget\packages\&quot; /Y /I" />
-  </Target>
 
 </Project>

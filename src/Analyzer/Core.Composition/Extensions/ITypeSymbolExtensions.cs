@@ -15,7 +15,7 @@ namespace CustomCode.Analyzer.Core.Composition.Extensions
         /// </summary>
         /// <param name="symbol"> The symbol whose namespace should be returned. </param>
         /// <returns> The symbol's full namespace or null. </returns>
-        public static string GetNamespace(this ITypeSymbol symbol)
+        public static string? GetNamespace(this ITypeSymbol symbol)
         {
             if (symbol == null)
             {

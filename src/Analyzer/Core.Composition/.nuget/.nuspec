@@ -3,15 +3,14 @@
   <metadata>
     <authors>$author$</authors>
     <copyright>$copyright$</copyright>
-    <description>Roslyn analyzer for C# attribute conventions for light inject.</description>
+    <description>$description$</description>
     <id>CustomCode.Analyzer.Core.Composition</id>
-    <licenseUrl>https://github.com/git-custom-code/Core-Composition/blob/master/LICENSE</licenseUrl>
+    <license type="expression">MIT</license>
     <owners>$author$</owners>
     <projectUrl>https://github.com/git-custom-code/Core-Composition</projectUrl>
     <repository type="git" url="https://github.com/git-custom-code/Core-Composition" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>C#, LightInject, Dependency Injection, analyzers</tags>
-    <!--<title>Roslyn analyzer for C# attribute conventions for light inject.</title>-->
     <title>$title$</title>
     <version>$version$</version>
     <dependencies>
@@ -20,6 +19,7 @@
   </metadata>
   <files>
     <file src="$outdir$Analyzer.*.dll" target="analyzers\dotnet\cs"/>
+    <file src="$outdir$Analyzer.*.pdb" target="analyzers\dotnet\cs" />
     <file src=".nuget\*.ps1" target="tools"/>
   </files>
 </package>
