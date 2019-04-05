@@ -67,7 +67,7 @@ namespace CustomCode.Core.Composition
         /// Create a new export attribute.
         /// </summary>
         /// <param name="serviceType"> The service type to register. </param>
-        public ExportAttribute(Type serviceType)
+        public ExportAttribute(Type? serviceType)
             : this(serviceType, Lifetime.Transient)
         { }
 
@@ -84,7 +84,7 @@ namespace CustomCode.Core.Composition
         /// </summary>
         /// <param name="serviceType"> The service type to register. </param>
         /// <param name="lifetime"> The service's lifetime. </param>
-        public ExportAttribute(Type serviceType = null, Lifetime lifetime = Lifetime.Transient)
+        public ExportAttribute(Type? serviceType = null, Lifetime lifetime = Lifetime.Transient)
         {
             ServiceType = serviceType;
             Lifetime = lifetime;
@@ -97,12 +97,12 @@ namespace CustomCode.Core.Composition
         /// <summary>
         /// Gets the service type to register.
         /// </summary>
-        public Type ServiceType { get; }
+        public Type? ServiceType { get; }
 
         /// <summary>
         /// Gets or sets the name of the service.
         /// </summary>
-        public string ServiceName { get; set; }
+        public string? ServiceName { get; set; }
 
         /// <summary>
         /// Gets or sets the service's lifetime.

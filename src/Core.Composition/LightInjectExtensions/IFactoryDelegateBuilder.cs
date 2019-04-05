@@ -15,6 +15,6 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
         /// </summary>
         /// <param name="type"> The type that should be created via a factory. </param>
         /// <returns> A delegate that can create a new instance of the specified <paramref name="type"/>. </returns>
-        Delegate CreateFactoryFor(TypeInfo type);
+        Delegate? CreateFactoryFor(TypeInfo type);
     }
 }

@@ -44,7 +44,7 @@ namespace CustomCode.Core.Composition
         /// Standard ctor.
         /// </summary>
         /// <param name="decoratedServiceType"> The service type that should be decorated. </param>
-        public DecoratorAttribute(Type decoratedServiceType = null)
+        public DecoratorAttribute(Type? decoratedServiceType = null)
         {
             DecoratedServiceType = decoratedServiceType;
         }
@@ -56,7 +56,7 @@ namespace CustomCode.Core.Composition
         /// <summary>
         /// Gets the service type that should be decorated.
         /// </summary>
-        public Type DecoratedServiceType { get; }
+        public Type? DecoratedServiceType { get; }
 
         #endregion
     }

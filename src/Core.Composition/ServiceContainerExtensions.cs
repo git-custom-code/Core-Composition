@@ -28,7 +28,7 @@ namespace CustomCode.Core.Composition
         /// Per default this extension method will search for all assemblies in the same folder (and subfolders) as the
         /// application's entry assembly. If you don't want that behavior, you can specify another root folder instead.
         /// </param>
-        public static void RegisterIocVisibleAssemblies(this ServiceContainer container, string codeBase = null)
+        public static void RegisterIocVisibleAssemblies(this ServiceContainer container, string? codeBase = null)
         {
             var assemblyDiscoverer = new AssemblyDiscoverer();
             foreach (var assemblyPath in assemblyDiscoverer.DiscoverIocVisibleAssemblies(codeBase))
@@ -123,7 +123,7 @@ namespace CustomCode.Core.Composition
         /// </summary>
         /// <param name="service"> The service whose default values should be retrieved. </param>
         /// <returns> The <paramref name="service"/>'s default values. </returns>
-        private static object[] GetFactoryDefaultValues(ServiceRegistration service)
+        private static object?[]? GetFactoryDefaultValues(ServiceRegistration service)
         {
             var type = service.ImplementingType.GetTypeInfo();
             foreach (var constructor in type.GetConstructors())
@@ -147,7 +147,7 @@ namespace CustomCode.Core.Composition
                         }
                     }
 
-                    var arguments = new object[parameterNameLut.Count];
+                    var arguments = new object?[parameterNameLut.Count];
                     var index = 0;
                     foreach(var parameter in parameters)
                     {

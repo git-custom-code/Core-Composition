@@ -24,7 +24,7 @@ namespace CustomCode.Core.Composition.Reflection
         /// In order to evaluate the custom attribute data the assemblies are (reflection only) loaded
         /// in a seperate application domain that is unloaded afterwards.
         /// </remarks>
-        public IEnumerable<string> DiscoverIocVisibleAssemblies(string codeBase = null)
+        public IEnumerable<string> DiscoverIocVisibleAssemblies(string? codeBase = null)
         {
             if (codeBase == null)
             {

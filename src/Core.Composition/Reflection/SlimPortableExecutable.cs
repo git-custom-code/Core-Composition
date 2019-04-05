@@ -20,11 +20,6 @@ namespace CustomCode.Core.Composition.Reflection
         /// <param name="path"> The (full) path of the portable executale file. </param>
         public SlimPortableExecutable(string path)
         {
-            if (string.IsNullOrEmpty(path))
-            {
-                throw new ArgumentNullException(nameof(path));
-            }
-
             Path = path;
         }
 
@@ -365,7 +360,7 @@ namespace CustomCode.Core.Composition.Reflection
         private bool IsIocVisibleAssembly(BinaryReader reader)
         {
             var (stream, hasIocAttributeName) = ReadStringStream(reader);
-            if (hasIocAttributeName == false)
+            if (stream == null || hasIocAttributeName == false)
             {
                 return false;
             }
@@ -389,7 +384,7 @@ namespace CustomCode.Core.Composition.Reflection
         /// The parsed string stream as dictionary and a flag indicating whether or not the string stream contains
         /// entries for the <see cref="IocVisibleAssemblyAttribute"/> type and namespace.
         /// </returns>
-        private (Dictionary<uint, string> stream, bool hasIocAttributeName) ReadStringStream(BinaryReader reader)
+        private (Dictionary<uint, string>? stream, bool hasIocAttributeName) ReadStringStream(BinaryReader reader)
         {
             var stringStream = StreamHeaders.SingleOrDefault(h => "#strings".Equals(h.Name, StringComparison.OrdinalIgnoreCase));
             if (stringStream == null)

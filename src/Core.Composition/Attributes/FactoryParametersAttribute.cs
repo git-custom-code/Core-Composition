@@ -64,7 +64,7 @@ namespace CustomCode.Core.Composition
         /// Gets the names of the constructor parameters that should be used as parameters
         /// for a function factory.
         /// </summary>
-        public string[] ParameterNames { get; }
+        public string[]? ParameterNames { get; }
 
         #endregion
     }

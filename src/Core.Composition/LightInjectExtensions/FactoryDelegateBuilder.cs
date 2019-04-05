@@ -53,7 +53,7 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
         /// </summary>
         /// <param name="type"> The type that should be created via a factory. </param>
         /// <returns> A delegate that can create a new instance of the specified <paramref name="type"/>. </returns>
-        public Delegate CreateFactoryFor(TypeInfo type)
+        public Delegate? CreateFactoryFor(TypeInfo type)
         {
             foreach (var ctor in type.DeclaredConstructors)
             {
@@ -67,7 +67,7 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
                     }
                     else
                     {
-                        return CreateFactoryDelegate(ctor, factoryData, paramInfos);
+                        return CreateFactoryDelegate(ctor, factoryData.ParameterNames, paramInfos);
                     }
                 }
             }
@@ -100,14 +100,14 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
         /// Create a delegate that is able to call the specified <paramref name="ctor"/>.
         /// </summary>
         /// <param name="ctor"> The constructor to be called by the factory delegate. </param>
-        /// <param name="factoryData"> The <see cref="FactoryParametersAttribute"/>'s data specified by the developer. </param>
+        /// <param name="parameterNames"> The <see cref="FactoryParametersAttribute"/>'s parameter names specified by the developer. </param>
         /// <param name="paramInfos"> The <paramref name="ctor"/>'s parameters. </param>
         /// <returns> A delegate that is able to call the specified <paramref name="ctor"/>. </returns>
-        private Delegate CreateFactoryDelegate(ConstructorInfo ctor, FactoryParametersAttribute factoryData, ParameterInfo[] paramInfos)
+        private Delegate CreateFactoryDelegate(ConstructorInfo ctor, string[] parameterNames, ParameterInfo[] paramInfos)
         {
             var ctorArgs = new List<Expression>(paramInfos.Length);
-            var factoryArgs = new List<ParameterExpression>(factoryData.ParameterNames.Length);
-            var factoryArgsLut = new HashSet<string>(factoryData.ParameterNames.Select(n => n.ToLowerInvariant()));
+            var factoryArgs = new List<ParameterExpression>(parameterNames.Length);
+            var factoryArgsLut = new HashSet<string>(parameterNames.Select(n => n.ToLowerInvariant()));
             var factory = Expression.Parameter(ServiceFactoryType, "factory");
             factoryArgs.Add(factory);
 

@@ -38,10 +38,10 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
             ITypeExtractor compositionRootTypeExtractor,
             ICompositionRootExecutor compositionRootExecutor)
         {
-            TypeExtractor = typeExtractor ?? throw new ArgumentNullException(nameof(typeExtractor));
-            FactoryDelegateBuilder = factoryDelegateBuilder ?? throw new ArgumentNullException(nameof(factoryDelegateBuilder));
-            CompositionRootTypeExtractor = compositionRootTypeExtractor ?? throw new ArgumentNullException(nameof(compositionRootTypeExtractor));
-            CompositionRootExecutor = compositionRootExecutor ?? throw new ArgumentNullException(nameof(compositionRootExecutor));
+            TypeExtractor = typeExtractor;
+            FactoryDelegateBuilder = factoryDelegateBuilder;
+            CompositionRootTypeExtractor = compositionRootTypeExtractor;
+            CompositionRootExecutor = compositionRootExecutor;
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
         /// <summary>
         /// Gets or sets the currently scanned assembly.
         /// </summary>
-        private Assembly CurrentAssembly { get; set; }
+        private Assembly? CurrentAssembly { get; set; }
 
         /// <summary>
         /// Gets a regular expression that checks for non-generic type names.
@@ -196,7 +196,7 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
         /// A delegate that specifies if the <paramref name="serviceType"/> should be decorated.
         /// </param>
         private void RegisterDecorator(Type implementingType, IServiceRegistry serviceRegistry,
-            TypeInfo info, Type serviceType, Func<ServiceRegistration, bool> canDecorate = null)
+            TypeInfo info, Type? serviceType, Func<ServiceRegistration, bool>? canDecorate = null)
         {
             if (serviceType == null)
             {
@@ -225,7 +225,7 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
         /// <param name="info"> The <see cref="TypeInfo"/> for the service to register. </param>
         /// <param name="export"> The <see cref="ExportAttribute"/> data for the service to register. </param>
         /// <returns> The service types that are used to register the service at the container. </returns>
-        private Type[] FindServiceTypes(TypeInfo info, ExportAttribute export)
+        private Type[]? FindServiceTypes(TypeInfo info, ExportAttribute export)
         {
             // 1) use type defined by export
             if (export.ServiceType != null)
@@ -264,7 +264,7 @@ namespace CustomCode.Core.Composition.LightInjectExtensions
         /// </summary>
         /// <param name="export"> The <see cref="ExportAttribute"/> data for the service to register. </param>
         /// <returns> The lifetime that is used to register the service at the container. </returns>
-        private ILifetime GetLifetime(ExportAttribute export)
+        private ILifetime? GetLifetime(ExportAttribute export)
         {
             if (export.Lifetime == Lifetime.Transient)
             {

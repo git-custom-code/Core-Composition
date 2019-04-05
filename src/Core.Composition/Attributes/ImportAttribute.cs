@@ -42,11 +42,6 @@ namespace CustomCode.Core.Composition
         /// <param name="serviceName"> The name of the service to be imported. </param>
         public ImportAttribute(string serviceName)
         {
-            if (string.IsNullOrEmpty(serviceName))
-            {
-                throw new ArgumentNullException(nameof(serviceName));
-            }
-
             ServiceName = serviceName;
         }
 

@@ -15,16 +15,26 @@ namespace CustomCode.Core.Composition.ExceptionHandling
         /// </summary>
         /// <param name="exception"> The exception to be converted. </param>
         /// <returns> The converted exception or null. </returns>
-        public static UnresolvedDependencyException AsUnresolvedDependencyException(this Exception exception)
+        public static UnresolvedDependencyException? AsUnresolvedDependencyException(this Exception exception)
         {
             var invalidOperationException = ExtractUnresolvedDependencyException(exception);
             if (invalidOperationException != null)
             {
                 var messagePart = ExtractMessagePart(invalidOperationException.Message, "Target Type");
+                if (messagePart == null)
+                {
+                    return null;
+                }
+
                 var serviceType = ExtractTypeName(messagePart);
                 var serviceNamespace = ExtractNamespace(messagePart);
 
                 messagePart = ExtractMessagePart(invalidOperationException.Message, "Parameter");
+                if (messagePart == null)
+                {
+                    return null;
+                }
+
                 var index = messagePart.IndexOf('(') + 1;
                 messagePart = messagePart.Substring(index, messagePart.Length - 1 - index);
                 var dependencyType = ExtractTypeName(messagePart);
@@ -47,7 +57,7 @@ namespace CustomCode.Core.Composition.ExceptionHandling
         /// </summary>
         /// <param name="exception"> The exception to act on. </param>
         /// <returns> The extracted unresolved dependency exception or null. </returns>
-        private static InvalidOperationException ExtractUnresolvedDependencyException(Exception exception)
+        private static InvalidOperationException? ExtractUnresolvedDependencyException(Exception exception)
         {
             var current = exception;
             while (current != null)
@@ -72,7 +82,7 @@ namespace CustomCode.Core.Composition.ExceptionHandling
         /// <param name="message"> The message to act on. </param>
         /// <param name="partIdentifier"> The identifier of the part to be extracted. </param>
         /// <returns> The extracted part or null. </returns>
-        private static string ExtractMessagePart(string message, string partIdentifier)
+        private static string? ExtractMessagePart(string message, string partIdentifier)
         {
             var startIndex = message.IndexOf($"[{partIdentifier}: ");
             if (startIndex >= 0)
@@ -137,7 +147,7 @@ namespace CustomCode.Core.Composition.ExceptionHandling
                 return @string.Substring(0, startIndex);
             }
 
-            return null;
+            return "global::";
         }
 
         #endregion
