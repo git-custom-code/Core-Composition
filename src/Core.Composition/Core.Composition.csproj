@@ -1,41 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;netstandard2.0</TargetFrameworks>
-    <RootNamespace>CustomCode.Core.Composition</RootNamespace>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <IsPackable>True</IsPackable>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-
-    <PackageId>CustomCode.Core.Composition</PackageId>
-    <PackageVersion>2.2.0-alpha.1</PackageVersion>
     <Title>C# attribute conventions for light inject.</Title>
-    <Authors>CustomCode</Authors>
-    <Company>CustomCode</Company>
     <Description>C# attribute conventions for light inject.</Description>
-    <Copyright>Copyright @ 2018</Copyright>
-    <PackageLicenseUrl>https://github.com/git-custom-code/Core-Composition/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/git-custom-code/Core-Composition</PackageProjectUrl>
-    <PackageTags>C#, LightInject, Dependency Injection</PackageTags>
-    <RepositoryUrl>https://github.com/git-custom-code/Core-Composition</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
+    <RootNamespace>CustomCode.Core.Composition</RootNamespace>
   </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\Core.Composition.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Core.Composition.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="..\Shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
-    <Compile Include="..\Shared\SharedAssemblyVersion.cs" Link="Properties\SharedAssemblyVersion.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CustomCode.Core.ExceptionHandling" Version="1.1.0" />
@@ -43,9 +13,5 @@
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" Condition="'$(TargetFramework)' == 'netstandard1.6'" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
-
-  <Target Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Name="PostBuild" AfterTargets="Pack">
-    <Exec Command="xcopy &quot;$(ProjectDir)bin\Release\*.nupkg&quot; &quot;$(SolutionDir)..\..\.nuget\packages\&quot; /Y /I" />
-  </Target>
 
 </Project>

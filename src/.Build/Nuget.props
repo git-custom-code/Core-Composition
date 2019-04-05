@@ -1,0 +1,15 @@
+<Project>
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageVersion>$(SemVer)</PackageVersion>
+    <PackageProjectUrl>https://github.com/git-custom-code/Core-Composition</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/git-custom-code/Core-Composition</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>C#, LightInject, Dependency Injection</PackageTags>
+    <PackageLicenseUrl>https://github.com/git-custom-code/Core-Composition/blob/master/LICENSE</PackageLicenseUrl>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+</Project>

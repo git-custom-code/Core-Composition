@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Composition", "Core.Composition\Core.Composition.csproj", "{96A0A850-BDFB-4094-833C-F42D3D649834}"
 EndProject
@@ -9,10 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Core.Composition", "Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{56D940BB-5326-4EF4-ABAA-26F4F7176DF6}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2D7EF4A1-5881-489A-9C05-9C445666CC7A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{2D7EF4A1-5881-489A-9C05-9C445666CC7A}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.config = .nuget\NuGet.config
 	EndProjectSection
@@ -20,6 +21,23 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzer.Core.Composition", "Analyzer\Core.Composition\Analyzer.Core.Composition.csproj", "{395222CC-FA8F-4F3B-9000-42F696861E77}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Analyzer.Core.Composition", "Test.Analyzer.Core.Composition\Test.Analyzer.Core.Composition.csproj", "{2D35A3F2-9667-486C-A0B6-61D616119FC7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{8927B610-B988-4C6C-8BBA-F25BEC48806E}"
+	ProjectSection(SolutionItems) = preProject
+		.Build\Copyright.props = .Build\Copyright.props
+		.Build\CustomCode.snk = .Build\CustomCode.snk
+		.Build\Documentation.props = .Build\Documentation.props
+		.Build\NonNullableReferenceTypes.props = .Build\NonNullableReferenceTypes.props
+		.Build\Nuget.props = .Build\Nuget.props
+		.Build\Nuget.targets = .Build\Nuget.targets
+		.Build\Signing.props = .Build\Signing.props
+		.Build\Versioning.props = .Build\Versioning.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Style Guides", "Style Guides", "{73BA0B55-CA6C-48B2-86C0-14942C66CFF5}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +67,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2D7EF4A1-5881-489A-9C05-9C445666CC7A} = {56D940BB-5326-4EF4-ABAA-26F4F7176DF6}
+		{8927B610-B988-4C6C-8BBA-F25BEC48806E} = {56D940BB-5326-4EF4-ABAA-26F4F7176DF6}
+		{73BA0B55-CA6C-48B2-86C0-14942C66CFF5} = {56D940BB-5326-4EF4-ABAA-26F4F7176DF6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EBA1AE55-B2D6-4C31-A715-B1E3FCAD59CA}
