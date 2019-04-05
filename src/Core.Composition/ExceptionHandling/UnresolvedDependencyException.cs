@@ -67,7 +67,7 @@ namespace CustomCode.Core.Composition.ExceptionHandling
         /// for localization purposes.
         /// </summary>
         /// <returns> The exception's format items for localization or null. </returns>
-        public override object[] GetFormatItems()
+        public override object[]? GetFormatItems()
         {
             return new[] { DependencyNamespace, DependencyType, ServiceNamespace, ServiceType };
         }

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Version>2.3.0</Version>
     <FileVersion>$(Version)</FileVersion>
-    <SemVer>$(Version)-beta.1</SemVer>
+    <SemVer>$(Version)</SemVer>
     <InformationalVersion>$(SemVer)+build.developer</InformationalVersion>
   </PropertyGroup>
 
