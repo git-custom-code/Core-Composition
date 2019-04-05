@@ -1,10 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;netstandard2.0</TargetFrameworks>
     <Title>C# attribute conventions for light inject.</Title>
     <Description>C# attribute conventions for light inject.</Description>
     <RootNamespace>CustomCode.Core.Composition</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoWarn>1701;1702;NU5105</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
