@@ -7,7 +7,7 @@
     <RepositoryUrl>https://github.com/git-custom-code/Core-Composition</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>C#, LightInject, Dependency Injection</PackageTags>
-    <PackageLicenseUrl>https://github.com/git-custom-code/Core-Composition/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
