@@ -28,7 +28,7 @@ namespace CustomCode.Core.Composition
         /// Per default this extension method will search for all assemblies in the same folder (and subfolders) as the
         /// application's entry assembly. If you don't want that behavior, you can specify another root folder instead.
         /// </param>
-        public static void RegisterIocVisibleAssemblies(this ServiceContainer container, string? codeBase = null)
+        public static void RegisterIocVisibleAssemblies(this IServiceContainer container, string? codeBase = null)
         {
             var assemblyDiscoverer = new AssemblyDiscoverer();
             foreach (var assemblyPath in assemblyDiscoverer.DiscoverIocVisibleAssemblies(codeBase))
@@ -45,7 +45,7 @@ namespace CustomCode.Core.Composition
         /// Register the <paramref name="container"/> as <see cref="IServiceFactory"/> singleton.
         /// </summary>
         /// <param name="container"> The <see cref="ServiceContainer"/> to be registered. </param>
-        public static void RegisterSelf(this ServiceContainer container)
+        public static void RegisterSelf(this IServiceContainer container)
         {
             container.RegisterInstance<IServiceFactory>(container);
         }
@@ -78,7 +78,7 @@ namespace CustomCode.Core.Composition
         /// with a conditional debug attribute.
         /// </remarks>
         [Conditional("DEBUG")]
-        public static void VerifyDependencies(this ServiceContainer container)
+        public static void VerifyDependencies(this IServiceContainer container)
         {
             var unresolvedDependencies = new List<UnresolvedDependencyException>();
             foreach (var service in container.AvailableServices)
