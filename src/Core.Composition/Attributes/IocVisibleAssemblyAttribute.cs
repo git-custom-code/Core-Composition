@@ -9,7 +9,7 @@ namespace CustomCode.Core.Composition
     /// </summary>
     /// <remarks>
     /// This attribute is used in combination with the
-    /// <see cref="ServiceContainerExtensions.RegisterIocVisibleAssemblies(LightInject.ServiceContainer, string)"/>
+    /// <see cref="ServiceContainerExtensions.RegisterIocVisibleAssemblies(LightInject.IServiceContainer, string)"/>
     /// extension method.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false)]
