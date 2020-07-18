@@ -5,8 +5,8 @@
   <Import Project="$(SolutionDir).Build/NonNullableReferenceTypes.props" />
   <Import Project="$(SolutionDir).Build/Documentation.props"
           Condition="!$(MSBuildProjectName.StartsWith('Test.')) And !$(MSBuildProjectName.StartsWith('Benchmark.'))"/>
-  <Import Project="$(SolutionDir).Build/Signing.props"
-          Condition="!$(MSBuildProjectName.StartsWith('Test.')) And !$(MSBuildProjectName.StartsWith('Benchmark.'))"/>
+  <!--<Import Project="$(SolutionDir).Build/Signing.props"
+          Condition="!$(MSBuildProjectName.StartsWith('Test.')) And !$(MSBuildProjectName.StartsWith('Benchmark.'))"/>-->
   <Import Project="$(SolutionDir).Build/Nuget.props"
           Condition="!$(MSBuildProjectName.StartsWith('Test.')) And !$(MSBuildProjectName.StartsWith('Benchmark.'))"/>
 
