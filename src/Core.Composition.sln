@@ -41,6 +41,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Style Guides", "Style Guide
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Compositon.Hosting", "Core.Compositon.Hosting\Core.Compositon.Hosting.csproj", "{BB08D47F-1070-49C0-B7E8-860E4D58FD36}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Core.Composition.SourceGenerator", "Test.Core.Composition.SourceGenerator\Test.Core.Composition.SourceGenerator.csproj", "{61E828F7-16DA-498C-A926-22268A1CAA22}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Composition.SourceGenerator", "Core.Composition.SourceGenerator\Core.Composition.SourceGenerator.csproj", "{190FE431-B43D-47BF-993C-F3F5189BCBC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +71,14 @@ Global
 		{BB08D47F-1070-49C0-B7E8-860E4D58FD36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB08D47F-1070-49C0-B7E8-860E4D58FD36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB08D47F-1070-49C0-B7E8-860E4D58FD36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61E828F7-16DA-498C-A926-22268A1CAA22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61E828F7-16DA-498C-A926-22268A1CAA22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61E828F7-16DA-498C-A926-22268A1CAA22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61E828F7-16DA-498C-A926-22268A1CAA22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{190FE431-B43D-47BF-993C-F3F5189BCBC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{190FE431-B43D-47BF-993C-F3F5189BCBC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{190FE431-B43D-47BF-993C-F3F5189BCBC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{190FE431-B43D-47BF-993C-F3F5189BCBC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
