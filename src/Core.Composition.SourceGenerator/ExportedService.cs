@@ -11,19 +11,22 @@ namespace CustomCode.Core.Composition.SourceGenerator
         /// <param name="serviceNamespace"> The namespace of the exported service. </param>
         /// <param name="implementationName"> The (type-)name of the exported service's implementation. </param>
         /// <param name="implementationNamespace"> The namespace of the exported service's implementation. </param>
-        /// <param name="lifetime"></param>
+        /// <param name="lifetime"> The service's lifetime (null for Lifetime.Transient). </param>
+        /// <param name="serviceId"> The service's optional id. </param>
         public ExportedService(
             string serviceName,
             string serviceNamespace,
             string implementationName,
             string implementationNamespace,
-            string? lifetime)
+            string? lifetime,
+            string? serviceId)
         {
             ServiceName = serviceName;
             ServiceNamespace = serviceNamespace;
             ImplementationName = implementationName;
             ImplementationNamespace = implementationNamespace;
             Lifetime = lifetime;
+            ServiceId = serviceId;
         }
 
         #endregion
@@ -40,7 +43,15 @@ namespace CustomCode.Core.Composition.SourceGenerator
         /// </summary>
         public string ImplementationNamespace { get; }
 
+        /// <summary>
+        /// Gets the service's lifetime (null for Lifetime.Transient).
+        /// </summary>
         public string? Lifetime { get; }
+
+        /// <summary>
+        /// Gets the service's optional id.
+        /// </summary>
+        public string? ServiceId { get; }
 
         /// <summary>
         /// Gets the (type-)name of the exported service.

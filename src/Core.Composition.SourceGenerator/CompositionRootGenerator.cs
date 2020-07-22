@@ -89,28 +89,23 @@ namespace CustomCode.Core.Composition.SourceGenerator
             code.AppendLine($"{t}{t}{{");
             foreach (var service in services.OrderBy(s => s.ImplementationName).ThenBy(s => s.ServiceName))
             {
-                if (string.Equals(service.ServiceName, service.ImplementationName, StringComparison.OrdinalIgnoreCase))
+                var genericPart = service.ImplementationName;
+                if (!string.Equals(service.ServiceName, service.ImplementationName, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (service.Lifetime == null)
-                    {
-                        code.AppendLine($"{t}{t}{t}serviceRegistry.Register<{service.ImplementationName}>();");
-                    }
-                    else
-                    {
-                        code.AppendLine($"{t}{t}{t}serviceRegistry.Register<{service.ImplementationName}>(new {service.Lifetime}());");
-                    }
+                    genericPart = $"{service.ServiceName}, {service.ImplementationName}";
                 }
-                else
+
+                var parameterPart = service.ServiceId;
+                if (service.ServiceId == null && service.Lifetime != null)
                 {
-                    if (service.Lifetime == null)
-                    {
-                        code.AppendLine($"{t}{t}{t}serviceRegistry.Register<{service.ServiceName}, {service.ImplementationName}>();");
-                    }
-                    else
-                    {
-                        code.AppendLine($"{t}{t}{t}serviceRegistry.Register<{service.ServiceName}, {service.ImplementationName}>(new {service.Lifetime}());");
-                    }
+                    parameterPart = $"new {service.Lifetime}()";
                 }
+                else if (service.Lifetime != null)
+                {
+                    parameterPart = $"{service.ServiceId}, new {service.Lifetime}()";
+                }
+
+                code.AppendLine($"{t}{t}{t}serviceRegistry.Register<{genericPart}>({parameterPart});");
             }
             code.AppendLine($"{t}{t}}}");
             code.AppendLine();
