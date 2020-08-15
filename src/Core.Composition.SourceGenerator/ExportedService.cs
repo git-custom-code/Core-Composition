@@ -1,5 +1,8 @@
 namespace CustomCode.Core.Composition.SourceGenerator
 {
+    /// <summary>
+    /// Data transfer object that contains the type metadata of detected services by the <see cref="ExportedServiceWalker"/>.
+    /// </summary>
     public sealed class ExportedService
     {
         #region Dependencies

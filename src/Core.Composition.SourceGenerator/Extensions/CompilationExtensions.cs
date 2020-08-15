@@ -23,7 +23,7 @@ namespace CustomCode.Core.Composition.SourceGenerator.Extensions
                 var assembly = compilation.GetAssemblyOrModuleSymbol(reference);
                 if (assembly?.Kind == SymbolKind.Assembly &&
                     LanguageNames.CSharp.Equals(assembly?.Language, StringComparison.OrdinalIgnoreCase) &&
-                    "Core.Composition".Equals(assembly?.Name, StringComparison.OrdinalIgnoreCase))
+                    Constants.CoreCompositionAssemblyName.Equals(assembly?.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }

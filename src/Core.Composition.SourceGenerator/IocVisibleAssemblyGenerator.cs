@@ -7,9 +7,17 @@ namespace CustomCode.Core.Composition.SourceGenerator
     using System.Text;
 
     /// <summary>
-    /// <see cref="ISourceGenerator"/> implementation that is used to generate the [assembly: IocVisibleAssembly]
+    /// Implementation of an <see cref="ISourceGenerator"/> that is used to generate the [assembly: IocVisibleAssembly]
     /// assembly level attribute (but only if "Core.Composition" assembly is referenced).
     /// </summary>
+    /// <example>
+    /// This SourceGenerator will generate the following code:
+    /// <![CDATA[
+    /// using CustomCode.Core.Composition;
+    ///
+    /// [assembly: IocVisibleAssembly]
+    /// ]]>
+    /// </example>
     [Generator]
     public sealed class IocVisibleAssemblyGenerator : ISourceGenerator
     {
@@ -29,8 +37,7 @@ namespace CustomCode.Core.Composition.SourceGenerator
 
                     context.AddSource(
                         Guid.NewGuid().ToString(),
-                        SourceText.From(code.ToString(),
-                        Encoding.UTF8));
+                        SourceText.From(code.ToString(), Encoding.UTF8));
                 }
             }
             catch (Exception e)

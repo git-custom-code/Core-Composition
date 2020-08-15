@@ -8,8 +8,30 @@ namespace CustomCode.Core.Composition.SourceGenerator
     using System.Text;
 
     /// <summary>
-    /// 
+    /// Implementation of an <see cref="ISourceGenerator"/> that is used to generate a couple of extension
+    /// methods for the "LightInject.IServiceRegistry" interface that will be used by the
+    /// generated code of the <see cref="CompositionRootGenerator"/>.
     /// </summary>
+    /// <example>
+    /// This SourceGenerator will generate the following code:
+    /// <![CDATA[
+    /// namespace CustomCode.Core.GeneratedCode
+    /// {
+    ///     using LightInject;
+    ///
+    ///     public partial class CompositionRoot : ICompositionRoot
+    ///     {
+    ///         public void Compose(IServiceRegistry serviceRegistry)
+    ///         {
+    ///             serviceRegistry.Register<IFoo1, Foo1>(new PerRequestLifetime());
+    ///             serviceRegistry.Register<IFoo2, Foo2>("serviceName", new PerContainerLifetime());
+    ///             ...
+    ///             serviceRegistry.Register<FooN>(new PerRequestLifetime());
+    ///         }
+    ///     }
+    /// }
+    /// ]]>
+    /// </example>
     [Generator]
     public sealed class CompositionRootGenerator : ISourceGenerator
     {
@@ -78,7 +100,7 @@ namespace CustomCode.Core.Composition.SourceGenerator
             code.AppendLine($"{t}/// <summary>");
             code.AppendLine($"{t}/// Auto-generated <see cref=\"ICompositionRoot\"/> implementation.");
             code.AppendLine($"{t}/// </summary>");
-            code.AppendLine($"{t}public class CompositionRoot : ICompositionRoot");
+            code.AppendLine($"{t}public partial class CompositionRoot : ICompositionRoot");
             code.AppendLine($"{t}{{");
 
             // Compose logic

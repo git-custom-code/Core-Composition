@@ -1,6 +1,6 @@
 namespace CustomCode.Core.Composition.SourceGenerator
 {
-    using CustomCode.Core.Composition.SourceGenerator.Extensions;
+    using Extensions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -9,7 +9,8 @@ namespace CustomCode.Core.Composition.SourceGenerator
     using System.Linq;
 
     /// <summary>
-    /// 
+    /// Implementation of a <see cref="CSharpSyntaxWalker"/> that will detect all types that
+    /// are marked with an "Export" attribute.
     /// </summary>
     public sealed class ExportedServiceWalker : CSharpSyntaxWalker
     {
@@ -59,13 +60,13 @@ namespace CustomCode.Core.Composition.SourceGenerator
             try
             {
                 var attributes = node.AttributeLists.SelectMany(l => l.Attributes);
-                if (attributes.Any(a => a.Name.ToString() == "Export"))
+                if (attributes.Any(a => a.Name.ToString().StartsWith(Constants.ExportAttribute, StringComparison.OrdinalIgnoreCase)))
                 {
                     var semanticModel = Compilation.GetSemanticModel(SyntaxTree);
-                    foreach (var exportAttribute in attributes.Where(a => a.Name.ToString() == "Export"))
+                    foreach (var exportAttribute in attributes.Where(a => a.Name.ToString() == Constants.ExportAttribute))
                     {
                         var exportAttributeSymbol = semanticModel.GetSymbolInfo(exportAttribute);
-                        if (exportAttributeSymbol.Symbol?.ContainingNamespace?.ToString() == "CustomCode.Core.Composition")
+                        if (exportAttributeSymbol.Symbol?.ContainingNamespace?.ToString() == Constants.CoreCompositionNamespace)
                         {
                             var lifetime = exportAttribute.ParseLifetime();
                             var serviceName = exportAttribute.ParseServiceName();

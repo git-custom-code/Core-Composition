@@ -28,7 +28,7 @@ namespace CustomCode.Core.Composition.SourceGenerator.Extensions
                     var value = argument.Expression?.NormalizeWhitespace().ToFullString() ?? string.Empty;
 
                     if ("lifetime".Equals(name, StringComparison.OrdinalIgnoreCase) ||
-                        (!"servicename".Equals(name, StringComparison.OrdinalIgnoreCase) &&
+                        (!"serviceName".Equals(name, StringComparison.OrdinalIgnoreCase) &&
                         value.StartsWith("Lifetime.", StringComparison.OrdinalIgnoreCase)))
                     {
                         lifetimeValue = value;
@@ -63,7 +63,7 @@ namespace CustomCode.Core.Composition.SourceGenerator.Extensions
                     var name = argument.NameEquals?.Name.Identifier.ValueText ?? string.Empty;
                     var value = argument.Expression?.NormalizeWhitespace().ToFullString() ?? string.Empty;
 
-                    if ("ServiceName".Equals(name, StringComparison.OrdinalIgnoreCase))
+                    if ("serviceName".Equals(name, StringComparison.OrdinalIgnoreCase))
                     {
                         return value;
                     }
@@ -90,7 +90,7 @@ namespace CustomCode.Core.Composition.SourceGenerator.Extensions
                     var value = argument.Expression?.NormalizeWhitespace().ToFullString() ?? string.Empty;
 
                     if ("serviceType".Equals(name, StringComparison.OrdinalIgnoreCase) ||
-                        (!"servicename".Equals(name, StringComparison.OrdinalIgnoreCase) &&
+                        (!"serviceName".Equals(name, StringComparison.OrdinalIgnoreCase) &&
                         value.StartsWith("typeof(", StringComparison.OrdinalIgnoreCase)))
                     {
                         serviceTypeValue = value;
