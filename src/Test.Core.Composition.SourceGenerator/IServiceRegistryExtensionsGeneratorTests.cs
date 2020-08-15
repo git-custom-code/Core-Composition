@@ -5,15 +5,15 @@ namespace CustomCode.Core.Composition.SourceGenerator.Tests
     using Xunit;
 
     /// <summary>
-    /// Automated tests for the <see cref="CompositionRootGenerator"/> type.
+    /// Automated tests for the <see cref="IServiceRegistryExtensionsGenerator"/> type.
     /// </summary>
-    public sealed class CompositionRootGeneratorTests : SourceGeneratorTest
+    public sealed class IServiceRegistryExtensionsGeneratorTests : SourceGeneratorTest
     {
         [Fact]
-        public void GenerateCompositionRoot()
+        public void GenerateIocVisibleAssemblyAttribute()
         {
             // Given
-            var generator = new CompositionRootGenerator();
+            var generator = new IServiceRegistryExtensionsGenerator();
 
             var source = @"
                 namespace Test.Namespace
@@ -23,11 +23,11 @@ namespace CustomCode.Core.Composition.SourceGenerator.Tests
                     public interface IFoo
                     { }
 
-                    //[Export(typeof(IFoo), Lifetime.Singleton, ServiceName = ""MyService"")]
-                    [Export(Lifetime.Transient, ServiceName = ""Id"")]
+                    [Export]
                     public sealed class Foo : IFoo
                     { }
                 }";
+
             var compilation = CreateCompilation(source);
 
             // When
@@ -36,7 +36,6 @@ namespace CustomCode.Core.Composition.SourceGenerator.Tests
             // Then
             Assert.Equal(0, compilation.GetDiagnostics().Count(d => d.Severity == DiagnosticSeverity.Error));
             Assert.Equal(0, generated.compilation.GetDiagnostics().Count(d => d.Severity == DiagnosticSeverity.Error));
-            Assert.Equal(0, generated.diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error));
         }
     }
 }

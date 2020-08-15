@@ -1,5 +1,6 @@
 namespace CustomCode.Core.Composition.SourceGenerator.Tests
 {
+    using LightInject;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using System.Collections.Immutable;
@@ -25,6 +26,7 @@ namespace CustomCode.Core.Composition.SourceGenerator.Tests
             var netStandard = MetadataReference.CreateFromFile(Assembly.Load("netstandard, Version=2.0.0.0").Location);
             var systemRuntime = MetadataReference.CreateFromFile(Assembly.Load("System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a").Location);
             var coreComposition = MetadataReference.CreateFromFile(typeof(ExportAttribute).Assembly.Location);
+            var lightInject = MetadataReference.CreateFromFile(typeof(ICompositionRoot).Assembly.Location);
 
             var options = new CSharpCompilationOptions(
                OutputKind.DynamicallyLinkedLibrary,
@@ -32,7 +34,7 @@ namespace CustomCode.Core.Composition.SourceGenerator.Tests
 
             var compilation = CSharpCompilation.Create(
                 assemblyName: Path.GetRandomFileName(),
-                references: new MetadataReference[] { mscorlib, netStandard, systemRuntime, coreComposition },
+                references: new MetadataReference[] { mscorlib, netStandard, systemRuntime, coreComposition, lightInject },
                 options: options);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Preview));
